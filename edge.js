@@ -18,5 +18,5 @@ function edge(vertex1, vertex2){
         context.arc(this.v2.x, this.v2.y, this.width/2, 0, Math.PI*2);
         context.fill();
         context.closePath();
-    }
+    };
 }

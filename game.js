@@ -1,5 +1,7 @@
+//Game status manager
 var stat = new gamestatus();
 
+//Vertex Group
 var dots = new Array();
 dots.push(new vertex("A", 100, 300, "#afa"));
 dots.push(new vertex("1", 200, 300));
@@ -13,6 +15,7 @@ dots.push(new vertex("8", 500, 400));
 dots.push(new vertex("9", 600, 300));
 dots.push(new vertex("B", 700, 300, "#faa"));
 
+//Edge Group
 var edge_info = [
     //    A  1  2  3  4  5  6  7  8  9  B
     /*A*/[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -38,6 +41,11 @@ for(var i = 0 ; i < 10 ; ++i)
     }
 }
 
+//Cursor Manager
+var cursor = new cursormanager();
+
+//Draw
+
 function draw(){
     context.clearRect(0, 0, canvas.width, canvas.height);
     for(var i = 0 ; i < edges.length; ++i)
@@ -49,10 +57,23 @@ function draw(){
         dots[i].draw();
     }
     stat.draw();
+    cursor.draw(dots);
 }
 
-function update(){
+//Main Functions (like Arduino)
+
+function setup(){
+    canvas.addEventListener('mousemove', function(evt){
+        cursor.updateCursor(evt);
+    });
+}
+
+function loop(){
     draw();
     //updating code
+    cursor.update();
 }
-setInterval(update, 10);
+
+//Implements
+setup();
+setInterval(loop, 10);

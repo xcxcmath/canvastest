@@ -4,7 +4,7 @@ function vertex(key, locx, locy, color = forecolor){
     this.y = locy;
     this.radius = 20;
     this.color = color;
-    this.labelfont = "15px Arial";
+    this.labelfont = "20px Arial";
     this.labelcolor = backcolor;
     this.draw = function(){
         context.beginPath();
@@ -14,7 +14,8 @@ function vertex(key, locx, locy, color = forecolor){
         context.fillStyle = this.labelcolor;
         context.font = this.labelfont;
         context.textAlign = "center";
-        context.fillText(this.key, this.x, this.y+15, 100);
+        context.textBaseline="middle";
+        context.fillText(this.key, this.x, this.y, 100);
         context.closePath();
     };
 }
