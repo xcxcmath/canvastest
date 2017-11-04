@@ -6,8 +6,11 @@ function cursormanager(){
         return (this.x >= 0 && this.y >= 0 && this.x <= canvas.width && this.y <= canvas.height);
     };
     this.updateCursor = function(evt){
+        var rect = canvas.getBoundingClientRect();
         this.x = evt.clientX - rect.left;
         this.y = evt.clientY - rect.top;
+        //this.x = evt.pageX;
+        //this.y = evt.pageY;
     };
     this.update = function(){
         this.delta += 0.05;
