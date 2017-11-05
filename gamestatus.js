@@ -15,10 +15,10 @@ function gamestatus(){
     this.phase = "D"; // D phase or A phase
     this.message = "Game start"; //Message above the map
     this.a_path = [0];
-    this.a_tower = [false];
+    this.a_tower = [0];
     this.a_plus = dots[0];
     this.b_path = [dots.length-1];
-    this.b_tower = [false];
+    this.b_tower = [0];
     this.b_plus = dots[dots.length-1];
 
     //Variables for global
@@ -79,7 +79,10 @@ function gamestatus(){
         context.fillStyle = forecolor;
         context.font = "30px Arial";
         context.textAlign = "center";
-        context.fillText(this.message, canvas.width / 2, 560 + 20 * Math.exp(-0.001 * this.time_from_pivot()), 800);
+        if(this.animation != "initial")
+            context.fillText(this.message, canvas.width / 2, 560 + 20 * Math.exp(-0.001 * this.time_from_pivot()), 800);
+        else
+            context.fillText(this.message, canvas.width / 2, 560, 800)
         context.closePath();
 
         //Phase
@@ -92,7 +95,7 @@ function gamestatus(){
         for(var i = 0 ; i < this.a_path.length ; ++i)
         {
             var this_a = dots[this.a_path[i]];
-            if(this.a_tower[i]){
+            if(this.a_tower[i] > 0){
                context.beginPath();
                context.fillStyle = acolor;
                context.moveTo(this_a.x - this_a.radius, this_a.y);
@@ -100,12 +103,18 @@ function gamestatus(){
                context.lineTo(this_a.x, this_a.y - this_a.radius*3);
                context.closePath();
                context.fill();
+               context.fillStyle = acolor;
+               context.font = towerfont;
+               context.textAlign = "center";
+               context.textBaseline="middle";
+               context.fillText(this.a_tower[i].toString(), this_a.x, this_a.y - this_a.radius*3.5, 800);
+               context.closePath();
             }
         }
         for(var i = 0 ; i < this.b_path.length ; ++i)
         {
             var this_b = dots[this.b_path[i]];
-            if(this.b_tower[i]){
+            if(this.b_tower[i] > 0){
                 context.beginPath();
                 context.fillStyle = bcolor;
                 context.moveTo(this_b.x - this_b.radius, this_b.y);
@@ -113,14 +122,20 @@ function gamestatus(){
                 context.lineTo(this_b.x, this_b.y - this_b.radius*3);
                 context.closePath();
                 context.fill();
+                context.fillStyle = bcolor;
+                context.font = towerfont;
+                context.textAlign = "center";
+                context.textBaseline="middle";
+                context.fillText(this.b_tower[i].toString(), this_b.x, this_b.y - this_b.radius*3.5, 800);
+                context.closePath();
             }
         }
         //Tower animation
         if(this.animation == "initial"){
             if(this.pivot_rate(this.initial_interval) >= 1){
                 sounds.towerconstplay();
-                this.a_tower[0] = true;
-                this.b_tower[0] = true;
+                this.a_tower[0] = 100;
+                this.b_tower[0] = 100;
                 this.animation = null;
                 this.message = "Select new vertex for A";
                 this.set_d_clickable();
