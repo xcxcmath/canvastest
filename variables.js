@@ -1,6 +1,8 @@
 var backcolor = '#014';
 var forecolor = '#dde';
 var midcolor = '#55a';
+var acolor = '#afa';
+var bcolor = '#faa';
 
 var canvas = document.getElementById("maincanvas");
 canvas.style.background=backcolor;

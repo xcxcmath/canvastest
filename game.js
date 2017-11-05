@@ -1,9 +1,6 @@
-//Game status manager
-var stat = new gamestatus();
-
 //Vertex Group
 var dots = new Array();
-dots.push(new vertex("A", 100, 300, "#afa"));
+dots.push(new vertex("A", 100, 300, acolor));
 dots.push(new vertex("1", 200, 300));
 dots.push(new vertex("2", 300, 200));
 dots.push(new vertex("3", 300, 400));
@@ -13,7 +10,7 @@ dots.push(new vertex("6", 400, 500));
 dots.push(new vertex("7", 500, 200));
 dots.push(new vertex("8", 500, 400));
 dots.push(new vertex("9", 600, 300));
-dots.push(new vertex("B", 700, 300, "#faa"));
+dots.push(new vertex("B", 700, 300, bcolor));
 
 //Edge Group
 var edge_info = [
@@ -41,6 +38,9 @@ for(var i = 0 ; i < 10 ; ++i)
     }
 }
 
+//Game status manager
+var stat = new gamestatus(dots[0], dots[10]);
+
 //Cursor Manager
 var cursor = new cursormanager();
 
@@ -65,6 +65,9 @@ function draw(){
 function setup(){
     canvas.addEventListener('mousemove', function(evt){
         cursor.updateCursor(evt);
+    });
+    canvas.addEventListener('mousedown', function(evt){
+        cursor.onClick(evt);
     });
 }
 

@@ -1,6 +1,7 @@
 function cursormanager(){
     this.x = 0;
     this.y = 0;
+    this.key = null;
     this.delta = 0;
     this.onCanvas = function(){
         return (this.x >= 0 && this.y >= 0 && this.x <= canvas.width && this.y <= canvas.height);
@@ -9,9 +10,13 @@ function cursormanager(){
         var rect = canvas.getBoundingClientRect();
         this.x = evt.clientX - rect.left;
         this.y = evt.clientY - rect.top;
-        //this.x = evt.pageX;
-        //this.y = evt.pageY;
     };
+    this.onClick = function(evt){
+        if(this.key != null){
+            // TODO: sound play
+            
+        }
+    }
     this.update = function(){
         this.delta += 0.05;
         if(this.delta > Math.PI*2)
@@ -32,12 +37,17 @@ function cursormanager(){
                 context.arc(vx, vy, vr*1.4, this.delta, this.delta+5/3*Math.PI);
                 context.stroke();
                 catched = true;
+                if(this.key != vertexgroup[i].key){
+                    this.key = vertexgroup[i].key;
+                    // TODO: sound play when key decided
+                }
             }
         }
         if(catched && this.onCanvas()){
             document.body.style.cursor = 'pointer';
         }
         else{
+            this.key = null;
             document.body.style.cursor = 'default';
         }
     };
