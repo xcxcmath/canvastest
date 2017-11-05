@@ -4,7 +4,6 @@ function gamestatus(){
     this.animation = "initial"; // Animation between selections
     // null : selection time
     // "initial" : animation for initialization
-    // "message" : animation for message
     // "path_const" : animation for path construction
     // "path_dest" : animation for path destroying
     // "tower_const" : animation for tower construction
@@ -28,7 +27,7 @@ function gamestatus(){
     // Variables about time(ms)
     this.pivot_time = performance.now();
 
-    this.initial_interval = 1000;
+    this.initial_interval = 1600;
     this.message_interval = 500;
     this.ani_interval = 1000; // sending, constructing, destroying, etc.
     this.end_interval = 1000;
@@ -77,16 +76,11 @@ function gamestatus(){
     this.draw = function(){
         context.beginPath();
         //Message above
-        if(this.animation != "message"){
-            context.fillStyle = forecolor;
-            context.font = "30px Arial";
-            context.textAlign = "center";
-            context.fillText(this.message, canvas.width / 2, 560, 800);
-            context.closePath();
-        }
-        else{
-            //TODO: message animation
-        }
+        context.fillStyle = forecolor;
+        context.font = "30px Arial";
+        context.textAlign = "center";
+        context.fillText(this.message, canvas.width / 2, 560 + 20 * Math.exp(-0.001 * this.time_from_pivot()), 800);
+        context.closePath();
 
         //Phase
 
@@ -123,26 +117,6 @@ function gamestatus(){
         }
         //Tower animation
         if(this.animation == "initial"){
-            context.beginPath();
-            context.fillStyle = acolor;
-            var new_x = this.a_plus.x;
-            var new_y = this.a_plus.y - canvas.height * (1-this.pivot_rate(this.initial_interval));
-            context.moveTo(new_x - this.a_plus.radius, new_y);
-            context.lineTo(new_x + this.a_plus.radius, new_y);
-            context.lineTo(new_x, new_y - this.a_plus.radius*3);
-            context.closePath();
-            context.fill();
-
-            context.beginPath();
-            context.fillStyle = bcolor;
-            new_x = this.b_plus.x;
-            new_y = this.b_plus.y - canvas.height * (1-this.pivot_rate(this.initial_interval));
-            context.moveTo(new_x - this.b_plus.radius, new_y);
-            context.lineTo(new_x + this.b_plus.radius, new_y);
-            context.lineTo(new_x, new_y - this.b_plus.radius*3);
-            context.closePath();
-            context.fill();
-
             if(this.pivot_rate(this.initial_interval) >= 1){
                 sounds.towerconstplay();
                 this.a_tower[0] = true;
@@ -150,6 +124,28 @@ function gamestatus(){
                 this.animation = null;
                 this.message = "Select new vertex for A";
                 this.set_d_clickable();
+                this.reset_pivot();
+            }
+            else{
+                context.beginPath();
+                context.fillStyle = acolor;
+                var new_x = this.a_plus.x;
+                var new_y = this.a_plus.y - canvas.height * Math.pow((1-this.pivot_rate(this.initial_interval)), 0.5);
+                context.moveTo(new_x - this.a_plus.radius, new_y);
+                context.lineTo(new_x + this.a_plus.radius, new_y);
+                context.lineTo(new_x, new_y - this.a_plus.radius*3);
+                context.closePath();
+                context.fill();
+
+                context.beginPath();
+                context.fillStyle = bcolor;
+                new_x = this.b_plus.x;
+                new_y = this.b_plus.y - canvas.height * Math.pow((1-this.pivot_rate(this.initial_interval)), 0.5);
+                context.moveTo(new_x - this.b_plus.radius, new_y);
+                context.lineTo(new_x + this.b_plus.radius, new_y);
+                context.lineTo(new_x, new_y - this.b_plus.radius*3);
+                context.closePath();
+                context.fill();
             }
         }
         else if(this.animation == "tower_const"){
