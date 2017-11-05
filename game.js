@@ -42,7 +42,7 @@ for(var i = 0 ; i < 10 ; ++i)
 }
 
 //Game status manager
-var stat = new gamestatus(dots[0], dots[10]);
+var stat = new gamestatus();
 
 //Cursor Manager
 var cursor = new cursormanager();
@@ -60,8 +60,8 @@ function draw(){
     {
         dots[i].draw();
     }
-    //cursor.draw(stat.clickable);
-    cursor.draw(dots);
+    cursor.draw(stat.clickable);
+    //cursor.draw(dots);
 }
 
 //Main Functions (like Arduino)

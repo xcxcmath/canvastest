@@ -1,4 +1,4 @@
-function gamestatus(dotA, dotB){
+function gamestatus(){
     this.turn = "A"; // A or B
 
     this.animation = "initial"; // Animation between selections
@@ -15,12 +15,12 @@ function gamestatus(dotA, dotB){
 
     this.phase = "D"; // D phase or A phase
     this.message = "Game start"; //Message above the map
-    this.a_path = [dotA];
+    this.a_path = [0];
     this.a_tower = [false];
-    this.a_plus = dotA;
-    this.b_path = [dotB];
+    this.a_plus = dots[0];
+    this.b_path = [dots.length-1];
     this.b_tower = [false];
-    this.b_plus = dotB;
+    this.b_plus = dots[dots.length-1];
 
     //Variables for global
     this.clickable = [];
@@ -45,9 +45,14 @@ function gamestatus(dotA, dotB){
     }
     
     // TODO : Map
-    this.get_map = function(){
+    this.set_d_clickable = function(){
+        this.clickable = [];
         if(this.turn == "A"){
-
+            for(var i = 0 ;i < dots.length ; ++i){
+                if(edge_info[i][this.a_path.length-1] == 1){
+                    this.clickable.push(dots[i]);
+                }
+            }
         }
         else{
 
@@ -92,7 +97,7 @@ function gamestatus(dotA, dotB){
         //Tower
         for(var i = 0 ; i < this.a_path.length ; ++i)
         {
-            var this_a = this.a_path[i];
+            var this_a = dots[this.a_path[i]];
             if(this.a_tower[i]){
                context.beginPath();
                context.fillStyle = acolor;
@@ -105,7 +110,7 @@ function gamestatus(dotA, dotB){
         }
         for(var i = 0 ; i < this.b_path.length ; ++i)
         {
-            var this_b = this.b_path[i];
+            var this_b = dots[this.b_path[i]];
             if(this.b_tower[i]){
                 context.beginPath();
                 context.fillStyle = bcolor;
@@ -144,6 +149,7 @@ function gamestatus(dotA, dotB){
                 this.b_tower[0] = true;
                 this.animation = null;
                 this.message = "Select new vertex for A";
+                this.set_d_clickable();
             }
         }
         else if(this.animation == "tower_const"){
