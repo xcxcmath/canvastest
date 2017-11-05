@@ -13,12 +13,11 @@ function cursormanager(){
     };
     this.onClick = function(evt){
         if(this.key != null){
-            // TODO: sound play
-            
+            sounds.mousedownplay();
         }
     }
     this.update = function(){
-        this.delta += 0.05;
+        this.delta += 0.025;
         if(this.delta > Math.PI*2)
             this.delta -= Math.PI*2;
     };
@@ -39,7 +38,7 @@ function cursormanager(){
                 catched = true;
                 if(this.key != vertexgroup[i].key){
                     this.key = vertexgroup[i].key;
-                    // TODO: sound play when key decided
+                    sounds.mouseonplay();
                 }
             }
         }

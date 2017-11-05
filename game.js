@@ -1,3 +1,6 @@
+//Sound
+var sounds = new soundmanager();
+
 //Vertex Group
 var dots = new Array();
 dots.push(new vertex("A", 100, 300, acolor));
@@ -52,11 +55,12 @@ function draw(){
     {
         edges[i].draw();
     }
+    stat.draw();
     for(var i = 0;i < 11 ; ++i)
     {
         dots[i].draw();
     }
-    stat.draw();
+    //cursor.draw(stat.clickable);
     cursor.draw(dots);
 }
 
@@ -75,8 +79,9 @@ function loop(){
     draw();
     //updating code
     cursor.update();
+    stat.update();
 }
 
 //Implements
 setup();
-setInterval(loop, 10);
+setInterval(loop, 5);
