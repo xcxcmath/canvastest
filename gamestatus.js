@@ -60,6 +60,7 @@ function gamestatus(){
                         this.clickable.push(dots[i]);
                 }
             }
+            this.clickable.push(dots[this.a_path[this.a_path.length-1]]);
             if(this.a_path.length > 1){
                 this.clickable.push(dots[this.a_path[this.a_path.length-2]]);
             }
@@ -78,6 +79,7 @@ function gamestatus(){
                         this.clickable.push(dots[i]);
                 }
             }
+            this.clickable.push(dots[this.b_path[this.b_path.length-1]]);
             if(this.b_path.length > 1){
                 this.clickable.push(dots[this.b_path[this.b_path.length-2]]);
             }
@@ -90,9 +92,19 @@ function gamestatus(){
         if(this.turn=="A"){
             if(this.a_path.length > 1 && this.a_path[this.a_path.length-2] == index){
                 this.a_path.pop();
+                this.a_tower.pop();
+            }
+            else if(this.a_path[this.a_path.length-1] != index){
+                this.a_path.push(index);
+                this.a_tower.push(0);
             }
             else{
-                this.a_path.push(index);
+                if(this.a_tower[this.a_tower.length-1] == 0){
+                    this.a_tower[this.a_tower.length-1] = 50;
+                }
+                else{
+                    this.a_tower[this.a_tower.length-1] = 0;
+                }
             }
             this.turn = "B";
         }
@@ -100,7 +112,7 @@ function gamestatus(){
             if(this.b_path.length > 1 && this.b_path[this.b_path.length-2] == index){
                 this.b_path.pop();
             }
-            else{
+            else if(this.b_path[this.b_path.length-1] != index){
                 this.b_path.push(index);
             }
             this.turn = "A";
