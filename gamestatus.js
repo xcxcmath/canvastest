@@ -48,27 +48,62 @@ function gamestatus(){
         this.clickable = [];
         if(this.turn == "A"){
             for(var i = 0 ;i < dots.length ; ++i){
-                if(edge_info[i][this.a_path.length-1] == 1){
-                    this.clickable.push(dots[i]);
+                if(edge_info[i][this.a_path[this.a_path.length-1]] == 1){
+                    var already = false;
+                    for(var j = 0 ; j < this.a_path.length ; ++j){
+                        if(this.a_path[j] == i){
+                            already = true;
+                            break;
+                        }
+                    }
+                    if(!already)
+                        this.clickable.push(dots[i]);
                 }
             }
         }
         else{
-
+            for(var i = 0 ;i < dots.length ; ++i){
+                if(edge_info[i][this.b_path[this.b_path.length-1]] == 1){
+                    var already = false;
+                    for(var j = 0 ; j < this.b_path.length ; ++j){
+                        if(this.b_path[j] == i){
+                            already = true;
+                            break;
+                        }
+                    }
+                    if(!already)
+                        this.clickable.push(dots[i]);
+                }
+            }
         }
     }
 
     /////
 
-    this.d_action = function(dot){
+    this.d_action = function(index){
+        if(this.turn=="A"){
+            this.a_path.push(index);
+            this.turn = "B";
+        }
+        else{
+            this.b_path.push(index);
+            this.turn = "A";
+        }
+        this.message = "Select new vertex";
+        this.set_d_clickable();
+        this.reset_pivot();
+    };
+    this.a_action = function(index){
 
     };
-    this.a_action = function(dot){
-
-    };
-    this.action = function(dot){
-        if(this.phase=="D") this.d_action(dot);
-        else this.a_action(dot);
+    this.action = function(key){
+        var index = 0;
+        for(index = 0 ; index < dots.length ; ++index){
+            if(dots[index].key == key)
+                break;
+        }
+        if(this.phase=="D") this.d_action(index);
+        else this.a_action(index);
     };
     this.update = function(){
         // update for animation and game status
@@ -76,19 +111,48 @@ function gamestatus(){
     this.draw = function(){
         context.beginPath();
         //Message above
-        context.fillStyle = forecolor;
         context.font = "30px Arial";
         context.textAlign = "center";
-        if(this.animation != "initial")
+        if(this.animation != "initial"){
+            if(this.turn == "A"){
+                context.fillStyle = acolor;
+            }
+            else{
+                context.fillStyle = bcolor;
+            }
             context.fillText(this.message, canvas.width / 2, 560 + 20 * Math.exp(-0.001 * this.time_from_pivot()), 800);
-        else
-            context.fillText(this.message, canvas.width / 2, 560, 800)
+        }
+        else{
+            context.fillStyle = forecolor;
+            context.fillText(this.message, canvas.width / 2, 560, 800);
+        }
         context.closePath();
 
         //Phase
-
+        context.beginPath();
+        context.fillStyle = forecolor;
+        context.font = "30px Arial";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(this.phase, 20, 20, 800);
+        context.closePath();
         //Path
-
+        for(var i = 1 ; i < this.a_path.length ; ++i){
+            context.beginPath();
+            context.strokeStyle = acolor;
+            context.lineWidth = 5;
+            context.moveTo(dots[this.a_path[i-1]].x-11, dots[this.a_path[i-1]].y-6);
+            context.lineTo(dots[this.a_path[i]].x+4, dots[this.a_path[i]].y -8);
+            context.stroke();
+        }
+        for(var i = 1 ; i < this.b_path.length ; ++i){
+            context.beginPath();
+            context.strokeStyle = bcolor;
+            context.lineWidth = 5;
+            context.moveTo(dots[this.b_path[i-1]].x-11, dots[this.b_path[i-1]].y-6);
+            context.lineTo(dots[this.b_path[i]].x+4, dots[this.b_path[i]].y -8);
+            context.stroke();
+        }
         //Path animation
 
         //Tower
@@ -137,7 +201,7 @@ function gamestatus(){
                 this.a_tower[0] = 100;
                 this.b_tower[0] = 100;
                 this.animation = null;
-                this.message = "Select new vertex for A";
+                this.message = "Select new vertex";
                 this.set_d_clickable();
                 this.reset_pivot();
             }

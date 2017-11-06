@@ -14,6 +14,7 @@ function cursormanager(){
     this.onClick = function(evt){
         if(this.key != null){
             sounds.mousedownplay();
+            stat.action(this.key);
         }
     }
     this.update = function(){
