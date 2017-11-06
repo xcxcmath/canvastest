@@ -111,9 +111,19 @@ function gamestatus(){
         else{
             if(this.b_path.length > 1 && this.b_path[this.b_path.length-2] == index){
                 this.b_path.pop();
+                this.b_tower.pop();
             }
             else if(this.b_path[this.b_path.length-1] != index){
                 this.b_path.push(index);
+                this.b_tower.push(0);
+            }
+            else{
+                if(this.b_tower[this.b_tower.length-1] == 0){
+                    this.b_tower[this.b_tower.length-1] = 50;
+                }
+                else{
+                    this.b_tower[this.b_tower.length-1] = 0;
+                }
             }
             this.turn = "A";
         }
