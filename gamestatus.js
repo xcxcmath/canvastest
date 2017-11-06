@@ -60,6 +60,9 @@ function gamestatus(){
                         this.clickable.push(dots[i]);
                 }
             }
+            if(this.a_path.length > 1){
+                this.clickable.push(dots[this.a_path[this.a_path.length-2]]);
+            }
         }
         else{
             for(var i = 0 ;i < dots.length ; ++i){
@@ -75,6 +78,9 @@ function gamestatus(){
                         this.clickable.push(dots[i]);
                 }
             }
+            if(this.b_path.length > 1){
+                this.clickable.push(dots[this.b_path[this.b_path.length-2]]);
+            }
         }
     }
 
@@ -82,11 +88,21 @@ function gamestatus(){
 
     this.d_action = function(index){
         if(this.turn=="A"){
-            this.a_path.push(index);
+            if(this.a_path.length > 1 && this.a_path[this.a_path.length-2] == index){
+                this.a_path.pop();
+            }
+            else{
+                this.a_path.push(index);
+            }
             this.turn = "B";
         }
         else{
-            this.b_path.push(index);
+            if(this.b_path.length > 1 && this.b_path[this.b_path.length-2] == index){
+                this.b_path.pop();
+            }
+            else{
+                this.b_path.push(index);
+            }
             this.turn = "A";
         }
         this.message = "Select new vertex";
@@ -149,8 +165,8 @@ function gamestatus(){
             context.beginPath();
             context.strokeStyle = bcolor;
             context.lineWidth = 5;
-            context.moveTo(dots[this.b_path[i-1]].x-11, dots[this.b_path[i-1]].y-6);
-            context.lineTo(dots[this.b_path[i]].x+4, dots[this.b_path[i]].y -8);
+            context.moveTo(dots[this.b_path[i-1]].x+7, dots[this.b_path[i-1]].y);
+            context.lineTo(dots[this.b_path[i]].x-9, dots[this.b_path[i]].y+2);
             context.stroke();
         }
         //Path animation
