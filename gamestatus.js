@@ -48,7 +48,7 @@ function gamestatus(){
                 if(!already)
                     this.clickable.push(dots[i]);
             }
-            if(dots[last_path].tower == this.turn || dots[last_path].tower == null)
+            if((dots[last_path].tower == this.turn || dots[last_path].tower == null) && dots[last_path].key != this.turn)
                 this.clickable.push(dots[last_path]);
 
             if(pathlength > 1 && dots[last_path].tower != this.turn)

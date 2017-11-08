@@ -1,14 +1,22 @@
 function soundmanager(){
-    this.bgsound = new Audio('assets/bgsound.mp3');
+    this.bgsound = new Audio('assets/bgsound.ogg');
     this.mouseon = new Audio('assets/mouseon.mp3');
     this.mousedown = new Audio('assets/mousedown.mp3');
     this.towerconst = new Audio('assets/towerconst.mp3');
    
     this.mouseon.volume = 0.3;
-    this.bgsound.addEventListener('end', function(e){
-        this.bgsound.currentTime = 0;
-        this.bgsound.play();
+    this.bgsound.currentTime = 0;
+    this.bgsound.addEventListener('ended', function(e){
+        this.currentTime = 48.6;
+        this.play();
     });
+    this.bgsound.addEventListener('timeupdate', function(){
+        var buffer = .30;
+        if(this.currentTime > this.duration - buffer){
+            this.currentTime = 48.6;
+            this.play();
+        }
+    }, false);
     this.bgsound.volume = 0.6;
     this.bgsound.play();
 
