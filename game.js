@@ -3,7 +3,7 @@ var sounds = new soundmanager();
 
 //Vertex Group
 var dots = new Array();
-dots.push(new vertex("A", 100, 300, acolor));
+dots.push(new vertex("A", 100, 300, colors['A']));
 dots.push(new vertex("1", 200, 300));
 dots.push(new vertex("2", 300, 200));
 dots.push(new vertex("3", 300, 400));
@@ -13,7 +13,7 @@ dots.push(new vertex("6", 400, 500));
 dots.push(new vertex("7", 500, 200));
 dots.push(new vertex("8", 500, 400));
 dots.push(new vertex("9", 600, 300));
-dots.push(new vertex("B", 700, 300, bcolor));
+dots.push(new vertex("B", 700, 300, colors['B']));
 
 //Edge Group
 var edge_info = [

@@ -1,8 +1,16 @@
 function gamestatus(){
     this.turn = "A"; // A or B
-
-    this.animation = "initial"; // Animation between selections
+    this.change_turn = function(){
+        if(this.turn=="A"){
+            this.turn = "B";
+        }
+        else{
+            this.turn = "A";
+        }
+    }
+    this.timer = new ani_timer('');
     // null : selection time
+    // "" : call initial
     // "initial" : animation for initialization
     // "path_const" : animation for path construction
     // "path_dest" : animation for path destroying
@@ -13,123 +21,72 @@ function gamestatus(){
     // ..etc?
 
     this.phase = "D"; // D phase or A phase
-    this.message = "Game start"; //Message above the map
-    this.a_path = [0];
-    this.a_tower = [0];
-    this.a_plus = dots[0];
-    this.b_path = [dots.length-1];
-    this.b_tower = [0];
-    this.b_plus = dots[dots.length-1];
+    this.message = "Game start"; //Message below the map
+    this.message_index = null;
+    this.path = {'A' : [0], 'B' : [dots.length-1]};
 
     //Variables for global
     this.clickable = [];
 
     // Variables about time(ms)
-    this.pivot_time = performance.now();
-
-    this.initial_interval = 1600;
-    this.message_interval = 500;
-    this.ani_interval = 1000; // sending, constructing, destroying, etc.
-    this.end_interval = 1000;
-
-    // Functions about time(ms)
-    this.time_from_pivot = function(){
-        return performance.now() - this.pivot_time;
-    }
-    this.reset_pivot = function(){
-        this.pivot_time = performance.now();
-    }
-    this.pivot_rate = function(i){
-        return this.time_from_pivot() / i;
-    }
+    this.intervals = {'end': 1000};
     
     // TODO : Map
     this.set_d_clickable = function(){
         this.clickable = [];
-        if(this.turn == "A"){
-            for(var i = 0 ;i < dots.length ; ++i){
-                if(edge_info[i][this.a_path[this.a_path.length-1]] == 1){
-                    var already = false;
-                    for(var j = 0 ; j < this.a_path.length ; ++j){
-                        if(this.a_path[j] == i){
-                            already = true;
-                            break;
-                        }
+        var pathlength = this.path[this.turn].length;
+        var last_path = this.path[this.turn][pathlength-1];
+        for(var i = 0; i < dots.length ; ++i){
+            if(edge_info[i][last_path] == 1){
+                var already = false;
+                for(var j = 0 ; j < pathlength ; ++j){
+                    if(this.path[this.turn][j] == i){
+                        already = true;
+                        break;
                     }
-                    if(!already)
-                        this.clickable.push(dots[i]);
                 }
+                if(!already)
+                    this.clickable.push(dots[i]);
             }
-            this.clickable.push(dots[this.a_path[this.a_path.length-1]]);
-            if(this.a_path.length > 1){
-                this.clickable.push(dots[this.a_path[this.a_path.length-2]]);
-            }
-        }
-        else{
-            for(var i = 0 ;i < dots.length ; ++i){
-                if(edge_info[i][this.b_path[this.b_path.length-1]] == 1){
-                    var already = false;
-                    for(var j = 0 ; j < this.b_path.length ; ++j){
-                        if(this.b_path[j] == i){
-                            already = true;
-                            break;
-                        }
-                    }
-                    if(!already)
-                        this.clickable.push(dots[i]);
-                }
-            }
-            this.clickable.push(dots[this.b_path[this.b_path.length-1]]);
-            if(this.b_path.length > 1){
-                this.clickable.push(dots[this.b_path[this.b_path.length-2]]);
-            }
+            if(dots[last_path].tower == this.turn || dots[last_path].tower == null)
+                this.clickable.push(dots[last_path]);
+
+            if(pathlength > 1 && dots[last_path].tower != this.turn)
+                this.clickable.push(dots[this.path[this.turn][pathlength-2]]);
+            
         }
     }
 
     /////
 
     this.d_action = function(index){
-        if(this.turn=="A"){
-            if(this.a_path.length > 1 && this.a_path[this.a_path.length-2] == index){
-                this.a_path.pop();
-                this.a_tower.pop();
-            }
-            else if(this.a_path[this.a_path.length-1] != index){
-                this.a_path.push(index);
-                this.a_tower.push(0);
+        var pathlength = this.path[this.turn].length;
+        if(pathlength > 1 && this.path[this.turn][pathlength-2] == index){
+            this.path[this.turn].pop(); //append path
+            this.change_turn();
+            this.set_d_clickable();
+        }
+        else if(this.path[this.turn][pathlength-1] != index){
+            this.path[this.turn].push(index); //destroy path
+            this.change_turn();
+            this.set_d_clickable();
+        }
+        else{ //tower
+            if(dots[index].tower == null){
+                dots[index].build_tower(this.turn);
+                this.message = "Building Defence Tower..";
+                this.message_index = index;
+                this.timer.reset('tower_const');
+                this.clickable = [];
             }
             else{
-                if(this.a_tower[this.a_tower.length-1] == 0){
-                    this.a_tower[this.a_tower.length-1] = 50;
-                }
-                else{
-                    this.a_tower[this.a_tower.length-1] = 0;
-                }
+                dots[index].destroy_tower();
+                this.message = "Destroying Defence Tower..";
+                this.message_index = index;
+                this.timer.reset('tower_dest');
+                this.clickable = [];
             }
-            this.turn = "B";
         }
-        else{
-            if(this.b_path.length > 1 && this.b_path[this.b_path.length-2] == index){
-                this.b_path.pop();
-                this.b_tower.pop();
-            }
-            else if(this.b_path[this.b_path.length-1] != index){
-                this.b_path.push(index);
-                this.b_tower.push(0);
-            }
-            else{
-                if(this.b_tower[this.b_tower.length-1] == 0){
-                    this.b_tower[this.b_tower.length-1] = 50;
-                }
-                else{
-                    this.b_tower[this.b_tower.length-1] = 0;
-                }
-            }
-            this.turn = "A";
-        }
-        this.message = "Select new vertex";
-        this.set_d_clickable();
-        this.reset_pivot();
     };
     this.a_action = function(index){
 
@@ -145,20 +102,46 @@ function gamestatus(){
     };
     this.update = function(){
         // update for animation and game status
+        if(this.timer.message == ''){
+            dots[this.path['A'][0]].build_tower('A', 100);
+            dots[this.path['B'][0]].build_tower('B', 100);
+            this.timer.reset('initial');
+        }
+        else if(this.timer.message == 'initial'){
+            if(dots[this.path['A'][0]].timer.message != 'building'){
+                this.message = 'Select vertex';
+                this.set_d_clickable();
+                this.timer.reset(null);
+            }
+        }
+        else if(this.timer.message == 'tower_const'){
+            var msg = dots[this.message_index].timer.message;
+            if(msg == 'building')
+                return;
+            this.change_turn();
+            this.message = "Select vertex";
+            this.set_d_clickable();
+            this.timer.reset(null);
+        }
+        else if(this.timer.message == 'tower_dest'){
+            var msg = dots[this.message_index].timer.message;
+            if(msg == 'destroying')
+                return;
+            this.change_turn();
+            this.message = "Select vertex";
+            this.set_d_clickable();
+            this.timer.reset(null);
+        }
     };
     this.draw = function(){
         context.beginPath();
-        //Message above
+        //Message below
         context.font = "30px Arial";
         context.textAlign = "center";
-        if(this.animation != "initial"){
-            if(this.turn == "A"){
-                context.fillStyle = acolor;
-            }
-            else{
-                context.fillStyle = bcolor;
-            }
-            context.fillText(this.message, canvas.width / 2, 560 + 20 * Math.exp(-0.001 * this.time_from_pivot()), 800);
+        context.textBaseline = "middle";
+        if(this.timer.message != "initial"){
+            context.fillStyle = colors[this.turn];
+            context.fillText(this.message, canvas.width / 2, 560 + 20 * Math.exp(-0.001 * this.timer.getms()), 800);
         }
         else{
             context.fillStyle = forecolor;
@@ -175,102 +158,25 @@ function gamestatus(){
         context.fillText(this.phase, 20, 20, 800);
         context.closePath();
         //Path
-        for(var i = 1 ; i < this.a_path.length ; ++i){
+        for(var i = 1 ; i < this.path['A'].length ; ++i){
             context.beginPath();
-            context.strokeStyle = acolor;
+            context.strokeStyle = colors['A'];
             context.lineWidth = 5;
-            context.moveTo(dots[this.a_path[i-1]].x-11, dots[this.a_path[i-1]].y-6);
-            context.lineTo(dots[this.a_path[i]].x+4, dots[this.a_path[i]].y -8);
+            context.moveTo(dots[this.path['A'][i-1]].x-11, dots[this.path['A'][i-1]].y-6);
+            context.lineTo(dots[this.path['A'][i]].x+4, dots[this.path['A'][i]].y-8);
             context.stroke();
         }
-        for(var i = 1 ; i < this.b_path.length ; ++i){
+        for(var i = 1 ; i < this.path['B'].length ; ++i){
             context.beginPath();
-            context.strokeStyle = bcolor;
+            context.strokeStyle = colors['B'];
             context.lineWidth = 5;
-            context.moveTo(dots[this.b_path[i-1]].x+7, dots[this.b_path[i-1]].y);
-            context.lineTo(dots[this.b_path[i]].x-9, dots[this.b_path[i]].y+2);
+            context.moveTo(dots[this.path['B'][i-1]].x+7, dots[this.path['B'][i-1]].y);
+            context.lineTo(dots[this.path['B'][i]].x-9, dots[this.path['B'][i]].y+2);
             context.stroke();
         }
         //Path animation
 
-        //Tower
-        for(var i = 0 ; i < this.a_path.length ; ++i)
-        {
-            var this_a = dots[this.a_path[i]];
-            if(this.a_tower[i] > 0){
-               context.beginPath();
-               context.fillStyle = acolor;
-               context.moveTo(this_a.x - this_a.radius, this_a.y);
-               context.lineTo(this_a.x + this_a.radius, this_a.y);
-               context.lineTo(this_a.x, this_a.y - this_a.radius*3);
-               context.closePath();
-               context.fill();
-               context.fillStyle = acolor;
-               context.font = towerfont;
-               context.textAlign = "center";
-               context.textBaseline="middle";
-               context.fillText(this.a_tower[i].toString(), this_a.x, this_a.y - this_a.radius*3.5, 800);
-               context.closePath();
-            }
-        }
-        for(var i = 0 ; i < this.b_path.length ; ++i)
-        {
-            var this_b = dots[this.b_path[i]];
-            if(this.b_tower[i] > 0){
-                context.beginPath();
-                context.fillStyle = bcolor;
-                context.moveTo(this_b.x - this_b.radius, this_b.y);
-                context.lineTo(this_b.x + this_b.radius, this_b.y);
-                context.lineTo(this_b.x, this_b.y - this_b.radius*3);
-                context.closePath();
-                context.fill();
-                context.fillStyle = bcolor;
-                context.font = towerfont;
-                context.textAlign = "center";
-                context.textBaseline="middle";
-                context.fillText(this.b_tower[i].toString(), this_b.x, this_b.y - this_b.radius*3.5, 800);
-                context.closePath();
-            }
-        }
         //Tower animation
-        if(this.animation == "initial"){
-            if(this.pivot_rate(this.initial_interval) >= 1){
-                sounds.towerconstplay();
-                this.a_tower[0] = 100;
-                this.b_tower[0] = 100;
-                this.animation = null;
-                this.message = "Select new vertex";
-                this.set_d_clickable();
-                this.reset_pivot();
-            }
-            else{
-                context.beginPath();
-                context.fillStyle = acolor;
-                var new_x = this.a_plus.x;
-                var new_y = this.a_plus.y - canvas.height * Math.pow((1-this.pivot_rate(this.initial_interval)), 0.5);
-                context.moveTo(new_x - this.a_plus.radius, new_y);
-                context.lineTo(new_x + this.a_plus.radius, new_y);
-                context.lineTo(new_x, new_y - this.a_plus.radius*3);
-                context.closePath();
-                context.fill();
-
-                context.beginPath();
-                context.fillStyle = bcolor;
-                new_x = this.b_plus.x;
-                new_y = this.b_plus.y - canvas.height * Math.pow((1-this.pivot_rate(this.initial_interval)), 0.5);
-                context.moveTo(new_x - this.b_plus.radius, new_y);
-                context.lineTo(new_x + this.b_plus.radius, new_y);
-                context.lineTo(new_x, new_y - this.b_plus.radius*3);
-                context.closePath();
-                context.fill();
-            }
-        }
-        else if(this.animation == "tower_const"){
-
-        }
-        else if(this.animation == "tower_dest"){
-
-        }
         //Army
 
         //Army animation

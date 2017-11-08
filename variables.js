@@ -1,8 +1,7 @@
 var backcolor = '#014';
 var forecolor = '#dde';
 var midcolor = '#55a';
-var acolor = '#afa';
-var bcolor = '#faa';
+var colors = {"A": '#afa', "B": '#faa'};
 
 var towerfont = '15px Arial';
 
