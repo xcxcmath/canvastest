@@ -69,7 +69,7 @@ function vertex(key, locx, locy, color = forecolor){
         }
         else if(this.timer.message == 'destroying'){
             if(r >= 1){
-            this.tower = null;
+                this.tower = null;
                 this.timer.reset(null);
             }
             else{

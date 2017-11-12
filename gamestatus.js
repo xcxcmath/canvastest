@@ -7,7 +7,7 @@ function gamestatus(){
         else{
             this.turn = "A";
         }
-    }
+    };
     this.timer = new ani_timer('');
     // null : selection time
     // "" : call initial
@@ -23,24 +23,38 @@ function gamestatus(){
     this.phase = "D"; // D phase or A phase
     this.message = "Game start"; //Message below the map
     this.message_index = null;
-    this.path = {'A' : [0], 'B' : [dots.length-1]};
-
+    //this.path = {'A' : [0], 'B' : [dots.length-1]};
+    this.path_data = {'A': new path(dots[0], 'A'), 'B': new path(dots[dots.length-1], 'B')};
     //Variables for global
     this.clickable = [];
 
     // Variables about time(ms)
     this.intervals = {'end': 1000};
     
+    // Function for index
+    this.get_dots_index = function(v){
+        for(var i = 0 ; i < dots.length ; ++i){
+            if(v.key == dots[i].key)
+                return i;
+        }
+        return -1;
+    };
+
     // TODO : Map
     this.set_d_clickable = function(){
         this.clickable = [];
-        var pathlength = this.path[this.turn].length;
-        var last_path = this.path[this.turn][pathlength-1];
+        //var pathlength = this.path[this.turn].length;
+        //var last_path = this.path[this.turn][pathlength-1];
+        var pathlength = this.path_data[this.turn].vertices.length;
+        var last_v = this.path_data[this.turn].vertices[pathlength-1];
+        var last_path = this.get_dots_index(last_v);
         for(var i = 0; i < dots.length ; ++i){
             if(edge_info[i][last_path] == 1){
                 var already = false;
                 for(var j = 0 ; j < pathlength ; ++j){
-                    if(this.path[this.turn][j] == i){
+                    
+                    //if(this.path[this.turn][j] == i){
+                    if(this.get_dots_index(this.path_data[this.turn].vertices[j]) == i){
                         already = true;
                         break;
                     }
@@ -52,24 +66,34 @@ function gamestatus(){
                 this.clickable.push(dots[last_path]);
 
             if(pathlength > 1 && dots[last_path].tower != this.turn)
-                this.clickable.push(dots[this.path[this.turn][pathlength-2]]);
+                this.clickable.push(this.path_data[this.turn].vertices[pathlength-2]);
+                //this.clickable.push(dots[this.get_dots_index(this.path_data[this.turn].vertices[pathlength-2]]));
             
         }
-    }
+    };
 
     /////
 
     this.d_action = function(index){
-        var pathlength = this.path[this.turn].length;
-        if(pathlength > 1 && this.path[this.turn][pathlength-2] == index){
-            this.path[this.turn].pop(); //append path
-            this.change_turn();
-            this.set_d_clickable();
+        //var pathlength = this.path[this.turn].length;
+        var pathlength = this.path_data[this.turn].vertices.length;
+        if(pathlength > 1 && this.get_dots_index(this.path_data[this.turn].vertices[pathlength-2]) == index){
+            //this.path[this.turn].pop(); //destroy path
+            //this.change_turn();
+            //this.set_d_clickable();
+            this.path_data[this.turn].destroy_path();
+            this.message = "Destroying Path..";
+            this.timer.reset('path_dest');
+            this.clickable = [];
         }
-        else if(this.path[this.turn][pathlength-1] != index){
-            this.path[this.turn].push(index); //destroy path
-            this.change_turn();
-            this.set_d_clickable();
+        else if(this.get_dots_index(this.path_data[this.turn].vertices[pathlength-1]) != index){
+            //this.path[this.turn].push(index); //append path
+            //this.change_turn();
+            //this.set_d_clickable();
+            this.path_data[this.turn].build_path(dots[index]);
+            this.message = "Building Path..";
+            this.timer.reset('path_const');
+            this.clickable = [];
         }
         else{ //tower
             if(dots[index].tower == null){
@@ -88,7 +112,7 @@ function gamestatus(){
             }
         }
     };
-    this.a_action = function(index){
+    this.a_action = function(key){
 
     };
     this.action = function(key){
@@ -98,23 +122,40 @@ function gamestatus(){
                 break;
         }
         if(this.phase=="D") this.d_action(index);
-        else this.a_action(index);
+        else this.a_action(key);
     };
     this.update = function(){
         // update for animation and game status
-        if(this.timer.message == ''){
-            dots[this.path['A'][0]].build_tower('A', 100);
-            dots[this.path['B'][0]].build_tower('B', 100);
+        var tm = this.timer.message;
+        if(tm == ''){
+            dots[0].build_tower('A', 100);
+            dots[dots.length-1].build_tower('B', 100);
             this.timer.reset('initial');
         }
-        else if(this.timer.message == 'initial'){
-            if(dots[this.path['A'][0]].timer.message != 'building'){
+        else if(tm == 'initial'){
+            if(dots[0].timer.message != 'building'){
                 this.message = 'Select vertex';
                 this.set_d_clickable();
                 this.timer.reset(null);
             }
         }
-        else if(this.timer.message == 'tower_const'){
+        else if(tm == 'path_const'){
+            if(this.path_data[this.turn].timer.message != 'building'){
+                this.change_turn();
+                this.message = 'Select vertex';
+                this.set_d_clickable();
+                this.timer.reset(null);
+            }
+        }
+        else if(tm == 'path_dest'){
+            if(this.path_data[this.turn].timer.message != 'destroying'){
+                this.change_turn();
+                this.message = 'Select vertex';
+                this.set_d_clickable();
+                this.timer.reset(null);
+            }
+        }
+        else if(tm == 'tower_const'){
             var msg = dots[this.message_index].timer.message;
             if(msg == 'building')
                 return;
@@ -123,7 +164,7 @@ function gamestatus(){
             this.set_d_clickable();
             this.timer.reset(null);
         }
-        else if(this.timer.message == 'tower_dest'){
+        else if(tm == 'tower_dest'){
             var msg = dots[this.message_index].timer.message;
             if(msg == 'destroying')
                 return;
@@ -158,6 +199,7 @@ function gamestatus(){
         context.fillText(this.phase, 20, 20, 800);
         context.closePath();
         //Path
+        /*
         for(var i = 1 ; i < this.path['A'].length ; ++i){
             context.beginPath();
             context.strokeStyle = colors['A'];
@@ -174,6 +216,9 @@ function gamestatus(){
             context.lineTo(dots[this.path['B'][i]].x-9, dots[this.path['B'][i]].y+2);
             context.stroke();
         }
+        */
+        this.path_data['A'].draw();
+        this.path_data['B'].draw();
         //Path animation
 
         //Tower animation
