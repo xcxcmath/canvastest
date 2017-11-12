@@ -42,7 +42,7 @@ for(var i = 0 ; i < 10 ; ++i)
 }
 
 //Game status manager
-var stat = new gamestatus();
+var stat = new gamestatus(4);
 
 //Cursor Manager
 var cursor = new cursormanager();

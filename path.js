@@ -8,7 +8,7 @@ function path(start_vertex, key){
     this.key = key;
 
     this.army = [0];
-    this.animation_interval = 500;
+    this.animation_interval = 800;
     this.timer = new ani_timer();
 
     this.build_path = function(v){
@@ -53,10 +53,12 @@ function path(start_vertex, key){
                     this.vertices.pop();
                     this.army.pop();
                     this.timer.reset(null);
+                    x = pvx;
+                    y = pvy;
                 }
                 else{
-                    x = pvx + (lvx - pvx) * Math.sqrt(1-r);
-                    y = pvy + (lvy - pvy) * Math.sqrt(1-r);
+                    x = pvx + (lvx - pvx) * Math.pow(1-r, 2);
+                    y = pvy + (lvy - pvy) * Math.pow(1-r, 2);
                 }
             }
             context.beginPath();
