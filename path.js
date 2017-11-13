@@ -22,7 +22,21 @@ function path(start_vertex, key){
         this.timer.reset('destroying');
     };
 
-    this.draw = function(){
+    //
+
+    this.create_army = function(n){
+        this.army[0] += n;
+    }
+
+    this.move_army = function(){
+        for(var i = this.vertices.length - 2 ; i >= 0 ; --i){
+            this.army[i+1] += this.army[i];
+            this.army[i] = 0;
+        }
+    }
+
+    this.draw_path = function(){
+        //line
         var l = this.vertices.length;
         context.strokeStyle = colors[this.key];
         context.lineWidth = 5;
@@ -68,4 +82,26 @@ function path(start_vertex, key){
             context.stroke();
         }
     };
+
+    this.draw_army = function(){
+        //army
+        context.font = '15px Arial';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        for(var i = 0; i < this.vertices.length ; ++i){
+            if(this.army[i] != 0){
+                var x = this.vertices[i].x;
+                var y = this.vertices[i].y - this.vertices[i].radius / 2;
+                var r = this.vertices[i].radius / 2;
+                context.beginPath();
+                context.strokeStyle = backcolor;
+                context.lineWidth = 2;
+                context.arc(x, y, r, 0, Math.PI*2);
+                context.stroke();
+                context.beginPath();
+                context.fillStyle = army_colors[this.key];
+                context.fillText(this.army[i], x, y, r);
+            }
+        }
+    }
 }

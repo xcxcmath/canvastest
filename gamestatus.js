@@ -195,7 +195,7 @@ function gamestatus(tower_max){
             }
         }
     };
-    this.draw = function(){
+    this.draw_1 = function(){
         context.beginPath();
         //Message below
         context.font = "30px Arial";
@@ -221,8 +221,8 @@ function gamestatus(tower_max){
         context.closePath();
 
         //Path
-        this.path_data['A'].draw();
-        this.path_data['B'].draw();
+        this.path_data['A'].draw_path();
+        this.path_data['B'].draw_path();
 
         //Tower Num
         context.beginPath();
@@ -233,4 +233,8 @@ function gamestatus(tower_max){
         context.fillStyle = colors['B'];
         context.fillText("Tower " + this.tower_num['B'] + " / " + this.tower_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2);
     };
+    this.draw_2 = function(){
+        this.path_data['A'].draw_army();
+        this.path_data['B'].draw_army();
+    }
 }

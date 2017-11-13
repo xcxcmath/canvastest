@@ -55,13 +55,13 @@ function draw(){
     {
         edges[i].draw();
     }
-    stat.draw();
+    stat.draw_1();
     for(var i = 0;i < 11 ; ++i)
     {
         dots[i].draw();
     }
+    stat.draw_2();
     cursor.draw(stat.clickable);
-    //cursor.draw(dots);
 }
 
 //Main Functions (like Arduino)
