@@ -48,9 +48,26 @@ var stat = new gamestatus(4);
 var cursor = new cursormanager();
 
 //Draw
-
+var logo_delta = 0;
 function draw(){
     context.clearRect(0, 0, canvas.width, canvas.height);
+    //Logo
+    context.beginPath();
+    context.fillStyle = '#225';
+    context.arc(canvas.width/4, canvas.height*0.75, canvas.width/4, 0, Math.PI*2);
+    context.fill();
+    context.font = '50px Arial';
+    context.fillStyle = backcolor;
+    context.textAlign = 'left';
+    context.textBaseline = 'middle';
+    context.fillText("Project", canvas.width/4 - canvas.width/5, canvas.height*0.75 - 25, canvas.width*0.4);
+    context.fillText("Hamiltonian", canvas.width/4 - canvas.width/5, canvas.height*0.75 + 25, canvas.width*0.4);
+    context.beginPath();
+    context.strokeStyle = '#225'
+    context.lineWidth = 5;
+    context.arc(canvas.width/4, canvas.height*0.75, canvas.width/4 + 10, logo_delta, logo_delta+17/9*Math.PI);
+    context.stroke();
+    //
     for(var i = 0 ; i < edges.length; ++i)
     {
         edges[i].draw();
@@ -80,6 +97,7 @@ function loop(){
     //updating code
     cursor.update();
     stat.update();
+    logo_delta += 0.001;
 }
 
 //Implements
