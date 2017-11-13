@@ -11,6 +11,7 @@ function path(start_vertex, key){
     this.animation_interval = 800;
     this.timer = new ani_timer();
 
+    //TODO: Path build/destroy sound..
     this.build_path = function(v){
         this.vertices.push(v);
         this.army.push(0);

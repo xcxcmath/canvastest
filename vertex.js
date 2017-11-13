@@ -86,7 +86,6 @@ function vertex(key, locx, locy, color = forecolor){
         // DO NOT USE ELSEIF : if timer is reset above then draw it in this statements
         r = this.timer.getrate(this.animation_interval);
         if(this.timer.message == 'built'){
-            //TODO: draw dust
             if(r >= 1){
                 this.timer.reset(null);
             }

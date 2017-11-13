@@ -17,6 +17,7 @@ function gamestatus(tower_max){
     // "tower_const" : animation for tower construction
     // "tower_dest" : animation for tower destroying
     // "send_army" : animation for sending army
+    // "phase" : animation for changing phase
     // "end" : animation for finish (forever)
     // ..etc?
 
@@ -30,7 +31,7 @@ function gamestatus(tower_max){
     this.clickable = [];
 
     // Variables about time(ms)
-    this.intervals = {'end': 1000};
+    this.intervals = {'phase': 1000, 'end': 1000};
     
     // Function for index
     this.get_dots_index = function(v){
@@ -41,7 +42,7 @@ function gamestatus(tower_max){
         return -1;
     };
 
-    // TODO : Map
+    // Set clickable
     this.set_d_clickable = function(){
         this.clickable = [];
         var pathlength = this.path_data[this.turn].vertices.length;
@@ -69,6 +70,10 @@ function gamestatus(tower_max){
             
         }
     };
+
+    this.set_a_clickable = function(){
+
+    }
 
     /////
 
@@ -109,12 +114,14 @@ function gamestatus(tower_max){
 
     };
     this.action = function(key){
-        var index = 0;
-        for(index = 0 ; index < dots.length ; ++index){
-            if(dots[index].key == key)
-                break;
+        if(this.phase=="D"){
+            var index = 0;
+            for(index = 0 ; index < dots.length ; ++index){
+                if(dots[index].key == key)
+                    break;
+            }
+            this.d_action(index);
         }
-        if(this.phase=="D") this.d_action(index);
         else this.a_action(key);
     };
     this.update = function(){
@@ -166,6 +173,27 @@ function gamestatus(tower_max){
             this.set_d_clickable();
             this.timer.reset(null);
         }
+        else if(tm == 'phase'){
+            if(this.timer.getrate(this.intervals[tm]) >= 1){
+                this.turn = 'B';
+                this.message = "Select vertex";
+                this.set_a_clickable();
+                this.timer.reset(null);
+            }
+        }
+        else{ //null & changing phase
+            if(this.phase == 'D' &&
+            this.path_data['A'].vertices.length == dots.length &&
+            this.path_data['B'].vertices.length == dots.length){
+                this.phase = 'A';
+                this.message = 'Phase Changed!';
+                this.timer.reset('phase');
+                this.clickable = [];
+            }
+            else if(this.phase == 'A'){
+                //TODO : determine game over
+            }
+        }
     };
     this.draw = function(){
         context.beginPath();
@@ -173,7 +201,7 @@ function gamestatus(tower_max){
         context.font = "30px Arial";
         context.textAlign = "center";
         context.textBaseline = "middle";
-        if(this.timer.message != "initial"){
+        if(this.timer.message != "initial" && this.timer.message != "phase"){
             context.fillStyle = colors[this.turn];
             context.fillText(this.message, canvas.width / 2, 560 + 20 * Math.exp(-0.001 * this.timer.getms()), 800);
         }
@@ -187,16 +215,19 @@ function gamestatus(tower_max){
         context.beginPath();
         context.fillStyle = forecolor;
         context.font = "30px Arial";
-        context.textAlign = "center";
+        context.textAlign = "left";
         context.textBaseline = "middle";
-        context.fillText(this.phase, 20, 20, 800);
+        context.fillText(this.phase + ' PHASE', 20, 20, 800);
         context.closePath();
+
+        //Path
         this.path_data['A'].draw();
         this.path_data['B'].draw();
 
         //Tower Num
         context.beginPath();
         context.font = "15px Arial";
+        context.textAlign = 'center';
         context.fillStyle = colors['A'];
         context.fillText("Tower " + this.tower_num['A'] + " / " + this.tower_max, dots[0].x, dots[0].y+dots[0].radius*2);
         context.fillStyle = colors['B'];
