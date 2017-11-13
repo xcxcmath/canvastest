@@ -54,18 +54,18 @@ function draw(){
     //Logo
     context.beginPath();
     context.fillStyle = '#225';
-    context.arc(canvas.width/4, canvas.height*0.75, canvas.width/4, 0, Math.PI*2);
+    context.arc(canvas.width*0.3, canvas.height*0.6, canvas.width/4, 0, Math.PI*2);
     context.fill();
     context.font = '50px Arial';
     context.fillStyle = backcolor;
     context.textAlign = 'left';
     context.textBaseline = 'middle';
-    context.fillText("Project", canvas.width/4 - canvas.width/5, canvas.height*0.75 - 25, canvas.width*0.4);
-    context.fillText("Hamiltonian", canvas.width/4 - canvas.width/5, canvas.height*0.75 + 25, canvas.width*0.4);
+    context.fillText("Project", canvas.width*0.3 - canvas.width/5, canvas.height*0.6 - 25, canvas.width*0.4);
+    context.fillText("Hamiltonian", canvas.width*0.3 - canvas.width/5, canvas.height*0.6 + 25, canvas.width*0.4);
     context.beginPath();
     context.strokeStyle = '#225'
     context.lineWidth = 5;
-    context.arc(canvas.width/4, canvas.height*0.75, canvas.width/4 + 10, logo_delta, logo_delta+17/9*Math.PI);
+    context.arc(canvas.width*0.3, canvas.height*0.6, canvas.width/4 + 10, logo_delta, logo_delta+16/9*Math.PI);
     context.stroke();
     //
     for(var i = 0 ; i < edges.length; ++i)
@@ -98,6 +98,7 @@ function loop(){
     cursor.update();
     stat.update();
     logo_delta += 0.001;
+    if(logo_delta > Math.PI*2) logo_delta -= Math.PI*2;
 }
 
 //Implements

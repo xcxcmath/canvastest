@@ -189,6 +189,8 @@ function gamestatus(tower_max){
                 this.message = 'Phase Changed!';
                 this.timer.reset('phase');
                 this.clickable = [];
+                this.path_data['A'].create_army(10);
+                this.path_data['B'].create_army(10);
             }
             else if(this.phase == 'A'){
                 //TODO : determine game over
