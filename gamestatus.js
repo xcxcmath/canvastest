@@ -185,6 +185,7 @@ function gamestatus(tower_max){
             if(this.phase == 'D' &&
             this.path_data['A'].vertices.length == dots.length &&
             this.path_data['B'].vertices.length == dots.length){
+                sounds.phasechangeplay();
                 this.phase = 'A';
                 this.message = 'Phase Changed!';
                 this.timer.reset('phase');
