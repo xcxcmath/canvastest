@@ -1,4 +1,4 @@
-function gamestatus(tower_max){
+function gamestatus(tower_max, army_max, group_max){
     this.turn = "A"; // A or B
     this.change_turn = function(){
         if(this.turn=="A"){
@@ -36,8 +36,9 @@ function gamestatus(tower_max){
     this.message = "Game start"; //Message below the map
     this.message_index = null;
     this.path_data = {'A': new path(dots[0], 'A'), 'B': new path(dots[dots.length-1], 'B')};
-    this.tower_num = {'A': 1, 'B': 1};
     this.tower_max = tower_max;
+    this.army_max = army_max;
+    this.group_max = group_max;
     //Variables for global
     this.clickable = [];
 
@@ -73,7 +74,7 @@ function gamestatus(tower_max){
                 if(!already)
                     this.clickable.push(dots[i]);
             }
-            if((dots[last_path].tower == this.turn || (dots[last_path].tower == null && this.tower_num[this.turn] < this.tower_max)) && dots[last_path].key != this.turn)
+            if((dots[last_path].tower == this.turn || (dots[last_path].tower == null && this.path_data[this.turn].get_tower() < this.tower_max)) && dots[last_path].key != this.turn)
                 this.clickable.push(dots[last_path]); //tower constructing or destroying
 
             if(pathlength > 1 && dots[last_path].tower != this.turn && !(this.another_is_complete()))
@@ -106,14 +107,14 @@ function gamestatus(tower_max){
         }
         else{ //tower
             if(dots[index].tower == null){
-                dots[index].build_tower(this.turn); this.tower_num[this.turn]++;
+                dots[index].build_tower(this.turn); //this.tower_num[this.turn]++;
                 this.message = "Building Defence Tower..";
                 this.message_index = index;
                 this.timer.reset('tower_const');
                 this.clickable = [];
             }
             else{
-                dots[index].destroy_tower(); this.tower_num[this.turn]--;
+                dots[index].destroy_tower(); //this.tower_num[this.turn]--;
                 this.message = "Destroying Defence Tower..";
                 this.message_index = index;
                 this.timer.reset('tower_dest');
@@ -240,12 +241,19 @@ function gamestatus(tower_max){
 
         //Tower Num
         context.beginPath();
-        context.font = "15px Arial";
+        context.font = "15px monospace";
         context.textAlign = 'center';
         context.fillStyle = colors['A'];
-        context.fillText("Tower " + this.tower_num['A'] + " / " + this.tower_max, dots[0].x, dots[0].y+dots[0].radius*2);
+        //context.fillText("Tower " + this.tower_num['A'] + " / " + this.tower_max, dots[0].x, dots[0].y+dots[0].radius*2);
+        context.fillText("Tower " + this.path_data['A'].get_tower() + " / " + this.tower_max, dots[0].x, dots[0].y+dots[0].radius*2);
+        context.fillText("Army  " + this.path_data['A'].get_army() +  " / " + this.army_max, dots[0].x, dots[0].y+dots[0].radius*2+20);
+        context.fillText("Group " + this.path_data['A'].get_group() + " / " + this.group_max, dots[0].x, dots[0].y+dots[0].radius*2+40);
         context.fillStyle = colors['B'];
-        context.fillText("Tower " + this.tower_num['B'] + " / " + this.tower_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2);
+        //context.fillText("Tower " + this.tower_num['B'] + " / " + this.tower_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2);
+        context.fillText("Tower " + this.path_data['B'].get_tower() + " / " + this.tower_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2);
+        context.fillText("Army  " + this.path_data['B'].get_army() + " / " + this.army_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2+20);
+        context.fillText("Group " + this.path_data['B'].get_group() + " / " + this.group_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2+40);
+        
     };
     this.draw_2 = function(){
         this.path_data['A'].draw_army();

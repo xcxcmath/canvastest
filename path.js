@@ -35,6 +35,32 @@ function path(start_vertex, key){
         }
     }
 
+    this.get_tower = function(){
+        var ret = 0;
+        for(var i = 0 ; i < this.vertices.length ; ++i){
+            ret += (this.vertices[i].tower == this.key);
+        }
+        return ret;
+    }
+
+    this.get_army = function(){
+        var ret = 0;
+        for(var i = 0 ; i < this.vertices.length ; ++i){
+            ret += this.army[i];
+        }
+        return ret;
+    }
+
+    this.get_group = function(){
+        var ret = 0;
+        for(var i = 0 ; i < this.vertices.length ; ++i){
+            ret += (this.army[i] > 0);
+        }
+        return ret;
+    }
+
+    //
+
     this.draw_path = function(){
         //line
         var l = this.vertices.length;

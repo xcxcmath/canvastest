@@ -42,16 +42,14 @@ for(var i = 0 ; i < 10 ; ++i)
 }
 
 //Command Group
-var commands = new Array();
-//commands.push(new command('C', 100, 110, 'A'));
-commands.push(new command('→', 100, 160, 'A'));
-commands.push(new command('➹', 100, 210, 'A'));
-//commands.push(new command('C', 700, 110, 'B'));
-commands.push(new command('→', 700, 160, 'B'));
-commands.push(new command('➹', 700, 210, 'B'));
+var commands = {'A': new Array(), 'B': new Array()};
+commands['A'].push(new command('m', '→', 100, 160, 'A'));
+commands['A'].push(new command('a', '➹', 100, 210, 'A'));
+commands['B'].push(new command('m', '→', 700, 160, 'B'));
+commands['B'].push(new command('a', '➹', 700, 210, 'B'));
 
 //Game status manager
-var stat = new gamestatus(4);
+var stat = new gamestatus(4, 30, 3);
 
 //Cursor Manager
 var cursor = new cursormanager();
@@ -87,8 +85,11 @@ function draw(){
         dots[i].draw();
     }
     stat.draw_2();
-    for(var i = 0 ; i < commands.length ; ++i){
-        commands[i].draw();
+    for(var i = 0 ; i < commands['A'].length ; ++i){
+        commands['A'][i].draw();
+    }
+    for(var i = 0 ; i < commands['B'].length ; ++i){
+        commands['B'][i].draw();
     }
     cursor.draw(stat.clickable);
 }

@@ -1,5 +1,6 @@
-function command(key, locx, locy, whos, show = false, available = false){
+function command(key, msg, locx, locy, whos, show = false, available = false){
     this.key = key;
+    this.message = msg;
     this.x = locx;
     this.y = locy;
     this.whos = whos;
@@ -22,7 +23,7 @@ function command(key, locx, locy, whos, show = false, available = false){
             context.font = this.labelfont;
             context.textAlign = 'center';
             context.textBaseline = 'middle';
-            context.fillText(this.key, this.x, this.y, this.radius*2);
+            context.fillText(this.message, this.x, this.y, this.radius*2);
             context.closePath();
         }
     };
