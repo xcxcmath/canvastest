@@ -41,6 +41,15 @@ for(var i = 0 ; i < 10 ; ++i)
     }
 }
 
+//Command Group
+var commands = new Array();
+commands.push(new command('C', 100, 110, 'A'));
+commands.push(new command('→', 100, 160, 'A'));
+commands.push(new command('➹', 100, 210, 'A'));
+commands.push(new command('C', 700, 110, 'B'));
+commands.push(new command('→', 700, 160, 'B'));
+commands.push(new command('➹', 700, 210, 'B'));
+
 //Game status manager
 var stat = new gamestatus(4);
 
@@ -73,11 +82,14 @@ function draw(){
         edges[i].draw();
     }
     stat.draw_1();
-    for(var i = 0;i < 11 ; ++i)
+    for(var i = 0;i < dots.length ; ++i)
     {
         dots[i].draw();
     }
     stat.draw_2();
+    for(var i = 0 ; i < commands.length ; ++i){
+        commands[i].draw();
+    }
     cursor.draw(stat.clickable);
 }
 

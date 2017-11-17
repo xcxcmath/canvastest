@@ -1,4 +1,4 @@
-function command(key, locx, locy, whos, show = false, available = true){
+function command(key, locx, locy, whos, show = false, available = false){
     this.key = key;
     this.x = locx;
     this.y = locy;
@@ -18,10 +18,11 @@ function command(key, locx, locy, whos, show = false, available = true){
             context.arc(this.x, this.y, this.radius, 0, Math.PI*2);
             context.fill();
             context.beginPath();
+            context.fillStyle = backcolor;
             context.font = this.labelfont;
             context.textAlign = 'center';
             context.textBaseline = 'middle';
-            context.fillText(this.key, this.x, this.y, , this.radius*2);
+            context.fillText(this.key, this.x, this.y, this.radius*2);
             context.closePath();
         }
     };
