@@ -22,13 +22,13 @@ function cursormanager(){
         if(this.delta > Math.PI*2)
             this.delta -= Math.PI*2;
     };
-    this.draw = function(vertexgroup){
+    this.draw = function(buttongroup){ //Upper: vertex // Lower: command
         var catched = false;
-        for(var i = 0 ; i < vertexgroup.length ; ++i)
+        for(var i = 0 ; i < buttongroup.length ; ++i)
         {
-            var vx = vertexgroup[i].x;
-            var vy = vertexgroup[i].y;
-            var vr = vertexgroup[i].radius;
+            var vx = buttongroup[i].x;
+            var vy = buttongroup[i].y;
+            var vr = buttongroup[i].radius;
             var sq_dist = Math.pow(vx - this.x, 2) + Math.pow(vy - this.y, 2);
             if(sq_dist < Math.pow(vr * 1.5, 2)){
                 context.beginPath();
@@ -37,8 +37,8 @@ function cursormanager(){
                 context.arc(vx, vy, vr*1.4, this.delta, this.delta+5/3*Math.PI);
                 context.stroke();
                 catched = true;
-                if(this.key != vertexgroup[i].key){
-                    this.key = vertexgroup[i].key;
+                if(this.key != buttongroup[i].key){
+                    this.key = buttongroup[i].key;
                     sounds.mouseonplay();
                 }
             }
