@@ -8,6 +8,17 @@ function gamestatus(tower_max){
             this.turn = "A";
         }
     };
+    this.change_if_not_complete = function(){
+        this.change_turn();
+        if(this.path_data[this.turn].vertices.length == dots.length)
+            this.change_turn();
+    }
+    this.another_is_complete = function(){
+        this.change_turn();
+        var ret = (this.path_data[this.turn].vertices.length == dots.length);
+        this.change_turn();
+        return ret;
+    }
     this.timer = new ani_timer('');
     // null : selection time
     // "" : call initial
@@ -65,7 +76,7 @@ function gamestatus(tower_max){
             if((dots[last_path].tower == this.turn || (dots[last_path].tower == null && this.tower_num[this.turn] < this.tower_max)) && dots[last_path].key != this.turn)
                 this.clickable.push(dots[last_path]); //tower constructing or destroying
 
-            if(pathlength > 1 && dots[last_path].tower != this.turn)
+            if(pathlength > 1 && dots[last_path].tower != this.turn && !(this.another_is_complete()))
                 this.clickable.push(this.path_data[this.turn].vertices[pathlength-2]); //path destroying
             
         }
@@ -141,7 +152,7 @@ function gamestatus(tower_max){
         }
         else if(tm == 'path_const'){
             if(this.path_data[this.turn].timer.message != 'building'){
-                this.change_turn();
+                this.change_if_not_complete();
                 this.message = 'Select vertex';
                 this.set_d_clickable();
                 this.timer.reset(null);
@@ -149,7 +160,7 @@ function gamestatus(tower_max){
         }
         else if(tm == 'path_dest'){
             if(this.path_data[this.turn].timer.message != 'destroying'){
-                this.change_turn();
+                this.change_if_not_complete();
                 this.message = 'Select vertex';
                 this.set_d_clickable();
                 this.timer.reset(null);
@@ -159,7 +170,7 @@ function gamestatus(tower_max){
             var msg = dots[this.message_index].timer.message;
             if(msg == 'building')
                 return;
-            this.change_turn();
+            this.change_if_not_complete();
             this.message = "Select vertex";
             this.set_d_clickable();
             this.timer.reset(null);
@@ -168,7 +179,7 @@ function gamestatus(tower_max){
             var msg = dots[this.message_index].timer.message;
             if(msg == 'destroying')
                 return;
-            this.change_turn();
+            this.change_if_not_complete();
             this.message = "Select vertex";
             this.set_d_clickable();
             this.timer.reset(null);
