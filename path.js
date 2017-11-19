@@ -41,7 +41,7 @@ function path(start_vertex, key){
 
     this.can_fight = function(){
         for(var i = 0 ; i < this.vertices.length ; ++i){
-            if(this.army[i] > 0 && this.vertices[i].tower != this.key){
+            if(this.army[i] > 0 && (this.vertices[i].tower != this.key && this.vertices[i].tower != null)){
                 return true;
             }
         }
@@ -50,7 +50,7 @@ function path(start_vertex, key){
 
     this.fight_tower = function(n){
         for(var i = 0 ; i < this.vertices.length ; ++i){
-            if(this.army[i] > 0 && this.vertices[i].tower != this.key){
+            if(this.army[i] > 0 && (this.vertices[i].tower != this.key && this.vertices[i].tower != null)){
                 var mv = Math.min(this.army[i], this.vertices[i].towerHP);
                 var decrement = Math.min(mv, n);
                 this.army[i] -= decrement;
