@@ -19,6 +19,15 @@ function gamestatus(tower_max, army_max, group_max){
         this.change_turn();
         return ret;
     }
+    this.change_turn_and_commands = function(attack){
+        commands[this.turn][0].show = false;
+        commands[this.turn][1].show = false;
+        this.change_turn();
+        commands[this.turn][0].show = true;
+        commands[this.turn][0].available = true;
+        commands[this.turn][1].show = true;
+        commands[this.turn][1].available = attack;
+    }
     this.timer = new ani_timer('');
     // null : selection time
     // "" : call initial
@@ -64,8 +73,6 @@ function gamestatus(tower_max, army_max, group_max){
             if(edge_info[i][last_path] == 1){
                 var already = false;
                 for(var j = 0 ; j < pathlength ; ++j){
-                    
-                    //if(this.path[this.turn][j] == i){
                     if(this.get_dots_index(this.path_data[this.turn].vertices[j]) == i){
                         already = true;
                         break;
@@ -84,7 +91,10 @@ function gamestatus(tower_max, army_max, group_max){
     };
 
     this.set_a_clickable = function(){
-
+        this.clickable = [];
+        this.clickable.push(commands[this.turn][0]);
+        this.clickable.push(commands[this.turn][1]);
+        this.clickable.push(this.path_data[this.turn].vertices[0]);
     }
 
     /////
@@ -107,14 +117,14 @@ function gamestatus(tower_max, army_max, group_max){
         }
         else{ //tower
             if(dots[index].tower == null){
-                dots[index].build_tower(this.turn); //this.tower_num[this.turn]++;
+                dots[index].build_tower(this.turn);
                 this.message = "Building Defence Tower..";
                 this.message_index = index;
                 this.timer.reset('tower_const');
                 this.clickable = [];
             }
             else{
-                dots[index].destroy_tower(); //this.tower_num[this.turn]--;
+                dots[index].destroy_tower();
                 this.message = "Destroying Defence Tower..";
                 this.message_index = index;
                 this.timer.reset('tower_dest');
@@ -123,7 +133,18 @@ function gamestatus(tower_max, army_max, group_max){
         }
     };
     this.a_action = function(key){
-
+        if(key == this.turn){
+            this.path_data[this.turn].create_army(10);
+        }
+        else if(key == 'm'){
+            this.path_data[this.turn].move_army();
+            this.path_data[this.turn].fight_tower(2);
+        }
+        else if(key == 'a'){
+            this.path_data[this.turn].fight_tower(10);
+        }
+        this.change_turn_and_commands(true);
+        this.set_a_clickable();
     };
     this.action = function(key){
         if(this.phase=="D"){
@@ -191,6 +212,10 @@ function gamestatus(tower_max, army_max, group_max){
                 this.message = "Select vertex";
                 this.set_a_clickable();
                 this.timer.reset(null);
+                commands[this.turn][0].show = true;
+                commands[this.turn][0].available = true;
+                commands[this.turn][1].show = true;
+                commands[this.turn][1].available = true;
             }
         }
         else{ //null & changing phase
@@ -244,12 +269,10 @@ function gamestatus(tower_max, army_max, group_max){
         context.font = "15px monospace";
         context.textAlign = 'center';
         context.fillStyle = colors['A'];
-        //context.fillText("Tower " + this.tower_num['A'] + " / " + this.tower_max, dots[0].x, dots[0].y+dots[0].radius*2);
         context.fillText("Tower " + this.path_data['A'].get_tower() + " / " + this.tower_max, dots[0].x, dots[0].y+dots[0].radius*2);
         context.fillText("Army  " + this.path_data['A'].get_army() +  " / " + this.army_max, dots[0].x, dots[0].y+dots[0].radius*2+20);
         context.fillText("Group " + this.path_data['A'].get_group() + " / " + this.group_max, dots[0].x, dots[0].y+dots[0].radius*2+40);
         context.fillStyle = colors['B'];
-        //context.fillText("Tower " + this.tower_num['B'] + " / " + this.tower_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2);
         context.fillText("Tower " + this.path_data['B'].get_tower() + " / " + this.tower_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2);
         context.fillText("Army  " + this.path_data['B'].get_army() + " / " + this.army_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2+20);
         context.fillText("Group " + this.path_data['B'].get_group() + " / " + this.group_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2+40);

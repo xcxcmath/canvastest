@@ -2,6 +2,10 @@ var xydelta = {
     'A':[-11, -6, 4, -8],
     'B':[7, 0, -9, 2]
 };
+var army_delta = {
+    'A':-10,
+    'B':10
+}
 
 function path(start_vertex, key){
     this.vertices = [start_vertex];
@@ -34,6 +38,27 @@ function path(start_vertex, key){
             this.army[i] = 0;
         }
     }
+
+    this.fight_tower = function(n){
+        for(var i = 0 ; i < this.vertices.length ; ++i){
+            if(this.army[i] > 0 && this.vertices[i].tower != this.key){
+                var mv = Math.min(this.army[i], this.vertices[i].towerHP);
+                var decrement = Math.min(mv, n);
+                this.army[i] -= decrement;
+                this.vertices[i].towerHP -= decrement;
+            }
+        }
+        this.after_fight();
+    }
+
+    this.after_fight = function(){
+        for(var i = 0 ; i < this.vertices.length ; ++i){
+            if(this.vertices[i].tower != null && this.vertices[i].towerHP <= 0)
+                this.vertices[i].destroy_tower();
+        }
+    }
+
+    //
 
     this.get_tower = function(){
         var ret = 0;
@@ -122,11 +147,11 @@ function path(start_vertex, key){
                 context.beginPath();
                 context.strokeStyle = backcolor;
                 context.lineWidth = 2;
-                context.arc(x, y, r, 0, Math.PI*2);
+                context.arc(x+army_delta[this.key], y, r, 0, Math.PI*2);
                 context.stroke();
                 context.beginPath();
                 context.fillStyle = army_colors[this.key];
-                context.fillText(this.army[i], x, y, r);
+                context.fillText(this.army[i], x+army_delta[this.key], y, r);
             }
         }
     }

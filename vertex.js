@@ -7,6 +7,7 @@ function vertex(key, locx, locy, color = forecolor){
     this.labelfont = "15px Arial";
 
     this.tower = null; // A, B, null, init
+    this.past_tower = null;
     this.towerHP = 0;
     this.animation_interval = 1000;
     this.timer = new ani_timer();
@@ -20,6 +21,9 @@ function vertex(key, locx, locy, color = forecolor){
     this.destroy_tower = function(){
         //TODO : tower destroying sounds..
         sounds.towerconstplay();
+        this.towerHP = 0;
+        this.past_tower = this.tower;
+        this.tower = null;
         this.timer.reset('destroying');
     };
 
@@ -69,13 +73,12 @@ function vertex(key, locx, locy, color = forecolor){
         }
         else if(this.timer.message == 'destroying'){
             if(r >= 1){
-                this.tower = null;
                 this.timer.reset(null);
             }
             else{
                 var delta = this.radius * 3 * Math.sqrt(r);
                 context.beginPath();
-                context.fillStyle = colors[this.tower];
+                context.fillStyle = colors[this.past_tower];
                 context.fillRect(this.x-this.radius, this.y-this.radius*3 + delta, this.radius*2, this.radius*3 - delta);
                 context.font = this.labelfont;
                 context.fillStyle = backcolor;

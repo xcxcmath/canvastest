@@ -43,10 +43,10 @@ for(var i = 0 ; i < 10 ; ++i)
 
 //Command Group
 var commands = {'A': new Array(), 'B': new Array()};
-commands['A'].push(new command('m', '→', 100, 160, 'A'));
-commands['A'].push(new command('a', '➹', 100, 210, 'A'));
-commands['B'].push(new command('m', '→', 700, 160, 'B'));
-commands['B'].push(new command('a', '➹', 700, 210, 'B'));
+commands['A'].push(new command('m', 'M', 100, 140, 'A'));
+commands['A'].push(new command('a', '➹', 100, 200, 'A'));
+commands['B'].push(new command('m', 'M', 700, 140, 'B'));
+commands['B'].push(new command('a', '➹', 700, 200, 'B'));
 
 //Game status manager
 var stat = new gamestatus(4, 30, 3);
