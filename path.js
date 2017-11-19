@@ -29,7 +29,7 @@ function path(start_vertex, key){
     //
 
     this.create_army = function(n){
-        this.army[0] += n;
+        this.army[0] += n
     }
 
     this.move_army = function(){
@@ -37,6 +37,15 @@ function path(start_vertex, key){
             this.army[i+1] += this.army[i];
             this.army[i] = 0;
         }
+    }
+
+    this.can_fight = function(){
+        for(var i = 0 ; i < this.vertices.length ; ++i){
+            if(this.army[i] > 0 && this.vertices[i].tower != this.key){
+                return true;
+            }
+        }
+        return false;
     }
 
     this.fight_tower = function(n){

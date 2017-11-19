@@ -19,14 +19,14 @@ function gamestatus(tower_max, army_max, group_max){
         this.change_turn();
         return ret;
     }
-    this.change_turn_and_commands = function(attack){
+    this.change_turn_and_commands = function(){
         commands[this.turn][0].show = false;
         commands[this.turn][1].show = false;
         this.change_turn();
         commands[this.turn][0].show = true;
         commands[this.turn][0].available = true;
         commands[this.turn][1].show = true;
-        commands[this.turn][1].available = attack;
+        commands[this.turn][1].available = (!this.just_attacked[this.turn] && this.path_data[this.turn].can_fight());
     }
     this.timer = new ani_timer('');
     // null : selection time
@@ -48,6 +48,7 @@ function gamestatus(tower_max, army_max, group_max){
     this.tower_max = tower_max;
     this.army_max = army_max;
     this.group_max = group_max;
+    this.just_attacked = {'A': false, 'B': false};
     //Variables for global
     this.clickable = [];
 
@@ -93,8 +94,14 @@ function gamestatus(tower_max, army_max, group_max){
     this.set_a_clickable = function(){
         this.clickable = [];
         this.clickable.push(commands[this.turn][0]);
-        this.clickable.push(commands[this.turn][1]);
-        this.clickable.push(this.path_data[this.turn].vertices[0]);
+        if(!this.just_attacked[this.turn] && this.path_data[this.turn].can_fight()){
+            this.clickable.push(commands[this.turn][1]);
+        }
+        var _army = this.path_data[this.turn].get_army();
+        var _group = this.path_data[this.turn].get_group();
+        var _first_army = this.path_data[this.turn].army[0];
+        if(_army < this.army_max && (_group < this.group_max || (_group == this.group_max && _first_army > 0)))
+            this.clickable.push(this.path_data[this.turn].vertices[0]);
     }
 
     /////
@@ -134,16 +141,20 @@ function gamestatus(tower_max, army_max, group_max){
     };
     this.a_action = function(key){
         if(key == this.turn){
-            this.path_data[this.turn].create_army(10);
+            var to_create = Math.min(10, this.army_max - this.path_data[this.turn].get_army());
+            this.path_data[this.turn].create_army(to_create);
+            this.just_attacked[this.turn] = false;
         }
         else if(key == 'm'){
             this.path_data[this.turn].move_army();
             this.path_data[this.turn].fight_tower(2);
+            this.just_attacked[this.turn] = false;
         }
         else if(key == 'a'){
             this.path_data[this.turn].fight_tower(10);
+            this.just_attacked[this.turn] = true;
         }
-        this.change_turn_and_commands(true);
+        this.change_turn_and_commands();
         this.set_a_clickable();
     };
     this.action = function(key){
@@ -215,7 +226,7 @@ function gamestatus(tower_max, army_max, group_max){
                 commands[this.turn][0].show = true;
                 commands[this.turn][0].available = true;
                 commands[this.turn][1].show = true;
-                commands[this.turn][1].available = true;
+                commands[this.turn][1].available = false;
             }
         }
         else{ //null & changing phase
