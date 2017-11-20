@@ -1,4 +1,4 @@
-function gamestatus(tower_max, army_max, group_max, default_army, default_damage, attack_damage){
+function gamestatus(tower_max, army_max, group_max, default_army, default_damage, attack_damage, base_tower, default_tower){
     this.turn = "A"; // A or B
     this.winner = null;
     this.change_turn = function(){
@@ -51,6 +51,8 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
     this.default_army = default_army;
     this.default_damage = default_damage;
     this.attack_damage = attack_damage;
+    this.base_tower = base_tower;
+    this.default_tower = default_tower;
     this.just_attacked = {'A': false, 'B': false};
     //Variables for global
     this.clickable = [];
@@ -129,7 +131,7 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
         }
         else{ //tower
             if(dots[index].tower == null){
-                dots[index].build_tower(this.turn);
+                dots[index].build_tower(this.turn, this.default_tower);
                 this.message = "Building Defence Tower..";
                 this.message_index = index;
                 this.timer.reset('tower_const');
@@ -177,8 +179,8 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
         // update for animation and game status
         var tm = this.timer.message;
         if(tm == ''){
-            this.path_data['A'].vertices[0].build_tower('A', 100);
-            this.path_data['B'].vertices[0].build_tower('B', 100);
+            this.path_data['A'].vertices[0].build_tower('A', this.base_tower);
+            this.path_data['B'].vertices[0].build_tower('B', this.base_tower);
             this.timer.reset('initial');
         }
         else if(tm == 'initial'){
@@ -253,12 +255,24 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
                         this.winner = 'B';
                         this.timer.reset('end');
                         this.clickable = [];
+                        colors['A'] = losecolor;
+                        army_colors['A'] = losecolor;
+                        commands['A'][0].show = false;
+                        commands['A'][1].show = false;
+                        commands['B'][0].show = false;
+                        commands['B'][1].show = false;
                     }
                     else if(this.path_data['B'].vertices[0].tower == null){
                         this.message = '';
                         this.winner = 'A';
                         this.timer.reset('end');
                         this.clickable = [];
+                        colors['B'] = losecolor;
+                        army_colors['B'] = losecolor;
+                        commands['A'][0].show = false;
+                        commands['A'][1].show = false;
+                        commands['B'][0].show = false;
+                        commands['B'][1].show = false;
                     }
                 }
             }

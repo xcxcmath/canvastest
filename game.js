@@ -44,12 +44,19 @@ for(var i = 0 ; i < 10 ; ++i)
 //Command Group
 var commands = {'A': new Array(), 'B': new Array()};
 commands['A'].push(new command('m', 'M', 100, 140, 'A'));
-commands['A'].push(new command('a', '➹', 100, 200, 'A'));
+commands['A'].push(new command('a', 'A', 100, 200, 'A'));
 commands['B'].push(new command('m', 'M', 700, 140, 'B'));
-commands['B'].push(new command('a', '➹', 700, 200, 'B'));
+commands['B'].push(new command('a', 'A', 700, 200, 'B'));
 
 //Game status manager
-var stat = new gamestatus(4, 150, 3, 150, 0, 150);
+var stat = new gamestatus(tower_max = 4,
+    army_max = 35,
+    group_max = 3,
+    default_army = 15,
+    default_damage = 4,
+    attack_damage = 15,
+    base_tower = 50,
+    default_tower = 20);
 
 //Cursor Manager
 var cursor = new cursormanager();
