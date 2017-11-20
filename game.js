@@ -49,7 +49,7 @@ commands['B'].push(new command('m', 'M', 700, 140, 'B'));
 commands['B'].push(new command('a', '➹', 700, 200, 'B'));
 
 //Game status manager
-var stat = new gamestatus(4, 30, 3);
+var stat = new gamestatus(4, 150, 3, 150, 0, 150);
 
 //Cursor Manager
 var cursor = new cursormanager();

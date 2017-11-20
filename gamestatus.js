@@ -1,5 +1,6 @@
-function gamestatus(tower_max, army_max, group_max){
+function gamestatus(tower_max, army_max, group_max, default_army, default_damage, attack_damage){
     this.turn = "A"; // A or B
+    this.winner = null;
     this.change_turn = function(){
         if(this.turn=="A"){
             this.turn = "B";
@@ -47,12 +48,15 @@ function gamestatus(tower_max, army_max, group_max){
     this.tower_max = tower_max;
     this.army_max = army_max;
     this.group_max = group_max;
+    this.default_army = default_army;
+    this.default_damage = default_damage;
+    this.attack_damage = attack_damage;
     this.just_attacked = {'A': false, 'B': false};
     //Variables for global
     this.clickable = [];
 
     // Variables about time(ms)
-    this.intervals = {'phase': 1000, 'end': 1000};
+    this.intervals = {'phase': 1000, 'end': 500};
     
     // Function for index
     this.get_dots_index = function(v){
@@ -142,17 +146,17 @@ function gamestatus(tower_max, army_max, group_max){
     };
     this.a_action = function(key){
         if(key == this.turn){
-            var to_create = Math.min(10, this.army_max - this.path_data[this.turn].get_army());
+            var to_create = Math.min(this.default_army, this.army_max - this.path_data[this.turn].get_army());
             this.path_data[this.turn].create_army(to_create);
             this.just_attacked[this.turn] = false;
         }
         else if(key == 'm'){
             this.path_data[this.turn].move_army();
-            this.path_data[this.turn].fight_tower(2);
+            this.path_data[this.turn].fight_tower(this.default_damage);
             this.just_attacked[this.turn] = false;
         }
         else if(key == 'a'){
-            this.path_data[this.turn].fight_tower(10);
+            this.path_data[this.turn].fight_tower(this.attack_damage);
             this.just_attacked[this.turn] = true;
         }
         this.change_turn_and_commands();
@@ -173,8 +177,8 @@ function gamestatus(tower_max, army_max, group_max){
         // update for animation and game status
         var tm = this.timer.message;
         if(tm == ''){
-            dots[0].build_tower('A', 100);
-            dots[dots.length-1].build_tower('B', 100);
+            this.path_data['A'].vertices[0].build_tower('A', 100);
+            this.path_data['B'].vertices[0].build_tower('B', 100);
             this.timer.reset('initial');
         }
         else if(tm == 'initial'){
@@ -239,11 +243,24 @@ function gamestatus(tower_max, army_max, group_max){
                 this.message = 'Phase Changed!';
                 this.timer.reset('phase');
                 this.clickable = [];
-                this.path_data['A'].create_army(10);
-                this.path_data['B'].create_army(10);
+                this.path_data['A'].create_army(this.default_army);
+                this.path_data['B'].create_army(this.default_army);
             }
             else if(this.phase == 'A'){
-                //TODO : determine game over
+                if(this.timer.message != 'end'){
+                    if(this.path_data['A'].vertices[0].tower == null){
+                        this.message = '';
+                        this.winner = 'B';
+                        this.timer.reset('end');
+                        this.clickable = [];
+                    }
+                    else if(this.path_data['B'].vertices[0].tower == null){
+                        this.message = '';
+                        this.winner = 'A';
+                        this.timer.reset('end');
+                        this.clickable = [];
+                    }
+                }
             }
         }
     };
@@ -288,10 +305,26 @@ function gamestatus(tower_max, army_max, group_max){
         context.fillText("Tower " + this.path_data['B'].get_tower() + " / " + this.tower_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2);
         context.fillText("Army  " + this.path_data['B'].get_army() + " / " + this.army_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2+20);
         context.fillText("Group " + this.path_data['B'].get_group() + " / " + this.group_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2+40);
-        
     };
     this.draw_2 = function(){
         this.path_data['A'].draw_army();
         this.path_data['B'].draw_army();
+
+        //Show winner when ended
+        if(this.timer.message == "end"){
+            var r = this.timer.getrate(this.intervals['end']);
+            context.beginPath();
+            context.fillStyle = plus_alpha('#000', Math.min(1, r));
+            var ydelta = 60*Math.sin(Math.min(1, r) * Math.PI / 2);
+            context.fillRect(0, canvas.height/2 - ydelta, canvas.width, ydelta*2);
+            if(r>=1){
+                context.beginPath();
+                context.font = "60px Arial";
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillStyle = plus_alpha(colors[this.winner], Math.min(1, r-1));
+                context.fillText(this.winner + ' Wins', canvas.width/2, canvas.height/2, canvas.width);
+            }
+        }
     }
 }

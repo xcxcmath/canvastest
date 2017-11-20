@@ -12,7 +12,7 @@ function path(start_vertex, key){
     this.key = key;
 
     this.army = [0];
-    this.animation_interval = 800;
+    this.animation_interval = 400;
     this.timer = new ani_timer();
 
     //TODO: Path build/destroy sound..

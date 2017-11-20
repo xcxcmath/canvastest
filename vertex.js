@@ -34,7 +34,7 @@ function vertex(key, locx, locy, color = forecolor){
             var r = Math.random() * 5;
             var a = Math.exp(-rate * 5);
             context.beginPath();
-            context.fillStyle = 'rgba(255, 255, 255, ' + a.toString() + ')';
+            context.fillStyle = plus_alpha('#fff', a);
             context.arc(x, y, r, 0, Math.PI*2);
             context.fill();
         }
@@ -61,10 +61,10 @@ function vertex(key, locx, locy, color = forecolor){
             else{
                 var delta = canvas.height * Math.sqrt(1-r) / 2;
                 context.beginPath();
-                context.fillStyle = colors[this.tower];
+                context.fillStyle = plus_alpha(colors[this.tower], r);
                 context.fillRect(this.x-this.radius, this.y-this.radius*3-delta, this.radius*2, this.radius*3);
                 context.font = this.labelfont;
-                context.fillStyle = backcolor;
+                context.fillStyle = plus_alpha(backcolor, r);
                 context.textAlign = "center";
                 context.textBaseline = "top";
                 context.fillText(this.towerHP.toString(), this.x, this.y-this.radius*3-delta, this.radius*2);
