@@ -24,7 +24,7 @@ function gamestatus(tower_max, army_max, group_max){
         commands[this.turn][1].show = false;
         this.change_turn();
         commands[this.turn][0].show = true;
-        commands[this.turn][0].available = true;
+        commands[this.turn][0].available = (this.path_data[this.turn].get_army() > 0);
         commands[this.turn][1].show = true;
         commands[this.turn][1].available = (!this.just_attacked[this.turn] && this.path_data[this.turn].can_fight());
     }
@@ -36,7 +36,6 @@ function gamestatus(tower_max, army_max, group_max){
     // "path_dest" : animation for path destroying
     // "tower_const" : animation for tower construction
     // "tower_dest" : animation for tower destroying
-    // "send_army" : animation for sending army
     // "phase" : animation for changing phase
     // "end" : animation for finish (forever)
     // ..etc?
@@ -93,13 +92,15 @@ function gamestatus(tower_max, army_max, group_max){
 
     this.set_a_clickable = function(){
         this.clickable = [];
-        this.clickable.push(commands[this.turn][0]);
-        if(!this.just_attacked[this.turn] && this.path_data[this.turn].can_fight()){
-            this.clickable.push(commands[this.turn][1]);
-        }
         var _army = this.path_data[this.turn].get_army();
         var _group = this.path_data[this.turn].get_group();
         var _first_army = this.path_data[this.turn].army[0];
+        if(_army > 0){
+            this.clickable.push(commands[this.turn][0]);
+        }
+        if(!this.just_attacked[this.turn] && this.path_data[this.turn].can_fight()){
+            this.clickable.push(commands[this.turn][1]);
+        }
         if(_army < this.army_max && (_group < this.group_max || (_group == this.group_max && _first_army > 0)))
             this.clickable.push(this.path_data[this.turn].vertices[0]);
     }
