@@ -118,8 +118,8 @@ function path(start_vertex, key){
                     this.timer.reset(null);
                 }
                 else{
-                    x = pvx + (lvx - pvx) * Math.sqrt(r);
-                    y = pvy + (lvy - pvy) * Math.sqrt(r);
+                    x = pvx + (lvx - pvx) * Math.sin(r * Math.PI / 2);
+                    y = pvy + (lvy - pvy) * Math.sin(r * Math.PI / 2);
                 }
             }
             else if(this.timer.message == 'destroying')
@@ -132,8 +132,8 @@ function path(start_vertex, key){
                     y = pvy;
                 }
                 else{
-                    x = pvx + (lvx - pvx) * Math.pow(1-r, 2);
-                    y = pvy + (lvy - pvy) * Math.pow(1-r, 2);
+                    x = pvx + (lvx - pvx) * Math.sin((1-r) * Math.PI / 2);
+                    y = pvy + (lvy - pvy) * Math.sin((1-r) * Math.PI / 2);
                 }
             }
             context.beginPath();
