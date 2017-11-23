@@ -85,15 +85,25 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
                         break;
                     }
                 }
-                if(!already)
+                if(!already){
+                    dots[i].help = 'Append Path';
                     this.clickable.push(dots[i]);
+                }
             }
-            if((dots[last_path].tower == this.turn || (dots[last_path].tower == null && this.path_data[this.turn].get_tower() < this.tower_max)) && dots[last_path].key != this.turn)
-                this.clickable.push(dots[last_path]); //tower constructing or destroying
+        }
+        if((dots[last_path].tower == this.turn || (dots[last_path].tower == null && this.path_data[this.turn].get_tower() < this.tower_max)) && dots[last_path].key != this.turn){
+            if(dots[last_path].tower == this.turn){
+                dots[last_path].help = 'Destroy Tower';
+            }
+            else{
+                dots[last_path].help = 'Build Tower';
+            }
+            this.clickable.push(dots[last_path]); //tower constructing or destroying
+        }
 
-            if(pathlength > 1 && dots[last_path].tower != this.turn && !(this.another_is_complete()))
-                this.clickable.push(this.path_data[this.turn].vertices[pathlength-2]); //path destroying
-            
+        if(pathlength > 1 && dots[last_path].tower != this.turn && !(this.another_is_complete())){
+            this.path_data[this.turn].vertices[pathlength-2].help = 'Destroy Path';
+            this.clickable.push(this.path_data[this.turn].vertices[pathlength-2]); //path destroying
         }
     };
 
@@ -103,13 +113,17 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
         var _group = this.path_data[this.turn].get_group();
         var _first_army = this.path_data[this.turn].army[0];
         if(_army > 0){
+            commands[this.turn][0].help = 'Move army group';
             this.clickable.push(commands[this.turn][0]);
         }
         if(!this.just_attacked[this.turn] && this.path_data[this.turn].can_fight()){
+            commands[this.turn][1].help = 'Attack towers';
             this.clickable.push(commands[this.turn][1]);
         }
-        if(_army < this.army_max[this.turn] && (_group < this.group_max || (_group == this.group_max && _first_army > 0)))
+        if(_army < this.army_max[this.turn] && (_group < this.group_max || (_group == this.group_max && _first_army > 0))){
+            this.path_data[this.turn].vertices[0].help = 'Create army group';
             this.clickable.push(this.path_data[this.turn].vertices[0]);
+        }
     }
 
     /////

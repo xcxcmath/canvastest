@@ -22,7 +22,7 @@ function cursormanager(){
         if(this.delta > Math.PI*2)
             this.delta -= Math.PI*2;
     };
-    this.draw = function(buttongroup){ //Upper: vertex // Lower: command
+    this.draw = function(buttongroup, color){ //Upper: vertex // Lower: command
         var catched = false;
         for(var i = 0 ; i < buttongroup.length ; ++i)
         {
@@ -37,10 +37,24 @@ function cursormanager(){
                 context.arc(vx, vy, vr*1.4, this.delta, this.delta+5/3*Math.PI);
                 context.stroke();
                 catched = true;
+
+                context.beginPath();
+                context.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                context.font = '20px Arial';
+                var txtw = context.measureText(buttongroup[i].help).width;
+                context.fillRect(this.x - txtw/2 - 15, this.y + 10, txtw + 30, 50);
+                context.beginPath();
+                context.fillStyle = color;
+                context.textAlign = 'center';
+                context.textBaseline = 'top';
+                context.fillText(buttongroup[i].help, this.x, this.y+23, canvas.width);
+
                 if(this.key != buttongroup[i].key){
                     this.key = buttongroup[i].key;
                     sounds.mouseonplay();
                 }
+
+                break;
             }
         }
         if(catched && this.onCanvas()){

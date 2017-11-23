@@ -9,6 +9,8 @@ function command(key, msg, locx, locy, whos, show = false, available = false){
     this.show = show;
     this.available = available;
 
+    this.help = '';
+
     this.draw = function(){
         if(this.show){
             context.beginPath();

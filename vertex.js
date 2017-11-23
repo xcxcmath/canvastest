@@ -6,6 +6,8 @@ function vertex(key, locx, locy, color = forecolor){
     this.color = color;
     this.labelfont = "15px Arial";
 
+    this.help = '';
+
     this.tower = null; // A, B, null, init
     this.past_tower = null;
     this.towerHP = 0;

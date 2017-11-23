@@ -99,7 +99,7 @@ function draw(){
     for(var i = 0 ; i < commands['B'].length ; ++i){
         commands['B'][i].draw();
     }
-    cursor.draw(stat.clickable);
+    cursor.draw(stat.clickable, colors[stat.turn]);
 }
 
 //Main Functions (like Arduino)
