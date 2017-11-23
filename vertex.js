@@ -1,8 +1,8 @@
-function vertex(key, locx, locy, color = forecolor){
+function vertex(key, locx, locy, color = forecolor, radius = 20){
     this.key = key;
     this.x = locx;
     this.y = locy;
-    this.radius = 20;
+    this.radius = radius;
     this.color = color;
     this.labelfont = "15px Arial";
 

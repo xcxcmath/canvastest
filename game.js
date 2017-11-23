@@ -36,7 +36,7 @@ for(var i = 0 ; i < 10 ; ++i)
     for(var j = i+1 ; j << 11 ; ++j)
     {
         if(edge_info[i][j] == 1){
-            edges.push(new edge(dots[i], dots[j]));
+            edges.push(new edge(dots[i], dots[j], width = 50));
         }
     }
 }

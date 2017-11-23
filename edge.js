@@ -1,8 +1,8 @@
-function edge(vertex1, vertex2){
+function edge(vertex1, vertex2, width){
     this.v1 = vertex1;
     this.v2 = vertex2;
     this.color = midcolor;
-    this.width = 60;
+    this.width = width;
     this.draw = function(){
         context.beginPath();
         context.moveTo(this.v1.x, this.v1.y);
