@@ -57,14 +57,19 @@ function path(start_vertex, key){
                 this.vertices[i].towerHP -= decrement;
             }
         }
-        this.after_fight();
+        return this.after_fight();
     }
 
     this.after_fight = function(){
+        var destroyed = 0;
         for(var i = 0 ; i < this.vertices.length ; ++i){
             if(this.vertices[i].tower != null && this.vertices[i].towerHP <= 0)
+            {
                 this.vertices[i].destroy_tower();
+                ++destroyed;
+            }
         }
+        return destroyed;
     }
 
     //

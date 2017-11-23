@@ -1,4 +1,4 @@
-function gamestatus(tower_max, army_max, group_max, default_army, default_damage, attack_damage, base_tower, default_tower){
+function gamestatus(tower_max, army_max, group_max, default_army, default_damage, attack_damage, base_tower, default_tower, army_increment){
     this.turn = "A"; // A or B
     this.winner = null;
     this.change_turn = function(){
@@ -46,13 +46,14 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
     this.message_index = null;
     this.path_data = {'A': new path(dots[0], 'A'), 'B': new path(dots[dots.length-1], 'B')};
     this.tower_max = tower_max;
-    this.army_max = army_max;
+    this.army_max = {'A': army_max, 'B': army_max};
     this.group_max = group_max;
     this.default_army = default_army;
     this.default_damage = default_damage;
     this.attack_damage = attack_damage;
     this.base_tower = base_tower;
     this.default_tower = default_tower;
+    this.army_increment = army_increment;
     this.just_attacked = {'A': false, 'B': false};
     //Variables for global
     this.clickable = [];
@@ -107,7 +108,7 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
         if(!this.just_attacked[this.turn] && this.path_data[this.turn].can_fight()){
             this.clickable.push(commands[this.turn][1]);
         }
-        if(_army < this.army_max && (_group < this.group_max || (_group == this.group_max && _first_army > 0)))
+        if(_army < this.army_max[this.turn] && (_group < this.group_max || (_group == this.group_max && _first_army > 0)))
             this.clickable.push(this.path_data[this.turn].vertices[0]);
     }
 
@@ -148,17 +149,17 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
     };
     this.a_action = function(key){
         if(key == this.turn){
-            var to_create = Math.min(this.default_army, this.army_max - this.path_data[this.turn].get_army());
+            var to_create = Math.min(this.default_army, this.army_max[this.turn] - this.path_data[this.turn].get_army());
             this.path_data[this.turn].create_army(to_create);
             this.just_attacked[this.turn] = false;
         }
         else if(key == 'm'){
             this.path_data[this.turn].move_army();
-            this.path_data[this.turn].fight_tower(this.default_damage);
+            this.army_max[this.turn] += this.path_data[this.turn].fight_tower(this.default_damage) * this.army_increment;
             this.just_attacked[this.turn] = false;
         }
         else if(key == 'a'){
-            this.path_data[this.turn].fight_tower(this.attack_damage);
+            this.army_max[this.turn] += this.path_data[this.turn].fight_tower(this.attack_damage) * this.army_increment;
             this.just_attacked[this.turn] = true;
         }
         this.change_turn_and_commands();
@@ -313,11 +314,11 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
         context.textAlign = 'center';
         context.fillStyle = colors['A'];
         context.fillText("Tower " + this.path_data['A'].get_tower() + " / " + this.tower_max, dots[0].x, dots[0].y+dots[0].radius*2);
-        context.fillText("Army  " + this.path_data['A'].get_army() +  " / " + this.army_max, dots[0].x, dots[0].y+dots[0].radius*2+20);
+        context.fillText("Army  " + this.path_data['A'].get_army() +  " / " + this.army_max['A'], dots[0].x, dots[0].y+dots[0].radius*2+20);
         context.fillText("Group " + this.path_data['A'].get_group() + " / " + this.group_max, dots[0].x, dots[0].y+dots[0].radius*2+40);
         context.fillStyle = colors['B'];
         context.fillText("Tower " + this.path_data['B'].get_tower() + " / " + this.tower_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2);
-        context.fillText("Army  " + this.path_data['B'].get_army() + " / " + this.army_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2+20);
+        context.fillText("Army  " + this.path_data['B'].get_army() + " / " + this.army_max['B'], dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2+20);
         context.fillText("Group " + this.path_data['B'].get_group() + " / " + this.group_max, dots[dots.length-1].x, dots[dots.length-1].y+dots[dots.length-1].radius*2+40);
     };
     this.draw_2 = function(){

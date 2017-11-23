@@ -56,7 +56,8 @@ var stat = new gamestatus(tower_max = 4,
     default_damage = 4,
     attack_damage = 15,
     base_tower = 50,
-    default_tower = 20);
+    default_tower = 20,
+    army_increment = 5);
 
 //Cursor Manager
 var cursor = new cursormanager();
