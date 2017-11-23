@@ -3,8 +3,8 @@ var xydelta = {
     'B':[7, 0, -9, 2]
 };
 var army_delta = {
-    'A':-10,
-    'B':10
+    'A':-15,
+    'B':15
 }
 
 function path(start_vertex, key){
@@ -150,21 +150,21 @@ function path(start_vertex, key){
 
     this.draw_army = function(){
         //army
-        context.font = '15px Arial';
+        context.font = '20px Arial';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         for(var i = 0; i < this.vertices.length ; ++i){
             if(this.army[i] != 0){
                 var x = this.vertices[i].x;
                 var y = this.vertices[i].y - this.vertices[i].radius / 2;
-                var r = this.vertices[i].radius / 2;
-                context.beginPath();
-                context.strokeStyle = backcolor;
-                context.lineWidth = 2;
-                context.arc(x+army_delta[this.key], y, r, 0, Math.PI*2);
-                context.stroke();
+                var r = this.vertices[i].radius;
                 context.beginPath();
                 context.fillStyle = army_colors[this.key];
+                //context.lineWidth = 2;
+                context.arc(x+army_delta[this.key], y, r, 0, Math.PI*2);
+                context.fill();
+                context.beginPath();
+                context.fillStyle = forecolor;
                 context.fillText(this.army[i], x+army_delta[this.key], y, r);
             }
         }

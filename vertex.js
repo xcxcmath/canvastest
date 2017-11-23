@@ -5,6 +5,7 @@ function vertex(key, locx, locy, color = forecolor, radius = 20){
     this.radius = radius;
     this.color = color;
     this.labelfont = "15px Arial";
+    this.towerfont = "20px Arial";
 
     this.help = '';
 
@@ -65,7 +66,7 @@ function vertex(key, locx, locy, color = forecolor, radius = 20){
                 context.beginPath();
                 context.fillStyle = plus_alpha(colors[this.tower], r);
                 context.fillRect(this.x-this.radius, this.y-this.radius*3-delta, this.radius*2, this.radius*3);
-                context.font = this.labelfont;
+                context.font = this.towerfont;
                 context.fillStyle = plus_alpha(backcolor, r);
                 context.textAlign = "center";
                 context.textBaseline = "top";
@@ -100,7 +101,7 @@ function vertex(key, locx, locy, color = forecolor, radius = 20){
             context.beginPath();
             context.fillStyle = colors[this.tower];
             context.fillRect(this.x-this.radius, this.y-this.radius*3, this.radius*2, this.radius*3);
-            context.font = this.labelfont;
+            context.font = this.towerfont;
             context.fillStyle = backcolor;
             context.textAlign = "center";
             context.textBaseline = "top";

@@ -39,7 +39,7 @@ function cursormanager(){
                 catched = true;
 
                 context.beginPath();
-                context.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                context.fillStyle = 'rgba(0, 0, 0, 0.8)';
                 context.font = '20px Arial';
                 var txtw = context.measureText(buttongroup[i].help).width;
                 context.fillRect(this.x - txtw/2 - 15, this.y + 10, txtw + 30, 50);
