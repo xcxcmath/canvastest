@@ -14,11 +14,29 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
         if(this.path_data[this.turn].vertices.length == dots.length)
             this.change_turn();
     }
+    this.check_possible = function(){
+        this.change_turn();
+        var enemy = this.turn;
+        this.change_turn();
+        var another = this.path_data[enemy].vertices[0];
+        return isPossible(edge_info, dots, this.path_data[this.turn].vertices, another, dots)
+    }
     this.another_is_complete = function(){
         this.change_turn();
         var ret = (this.path_data[this.turn].vertices.length == dots.length);
         this.change_turn();
-        return ret;
+        if(ret){/*
+            if(!isPossible(edge_info, dots, this.path_data[this.turn].vertices, another, dots)){
+                this.message = '';
+                this.winner = enemy;
+                this.timer.reset('end');
+                this.clickable = [];
+                colors[this.turn] = losecolor;
+                army_colors[this.turn] = losecolor;
+            }*/
+            return true;
+        }
+        return false;
     }
     this.change_turn_and_commands = function(){
         commands[this.turn][0].show = false;
@@ -262,6 +280,19 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
                 this.clickable = [];
                 this.path_data['A'].create_army(this.default_army);
                 this.path_data['B'].create_army(this.default_army);
+            }
+            else if(this.phase == 'D' && this.another_is_complete() && this.timer.message != 'end'){
+                if(!this.check_possible()){
+                    this.change_turn();
+                    var enemy = this.turn;
+                    this.change_turn();
+                    this.message = '';
+                    this.winner = enemy;
+                    this.timer.reset('end');
+                    this.clickable = [];
+                    colors[this.turn] = losecolor;
+                    army_colors[this.turn] = losecolor;
+                }
             }
             else if(this.phase == 'A'){
                 if(this.timer.message != 'end'){

@@ -9,37 +9,47 @@ function isHamiltonian(vertices, edges, start, end) {
     return vertices.length === 0;
 }
 
-function isAdjacent(here, there) {
-    return edge_info[here][there] === 1;
+function index_of_point(point, points){
+    for(var i = 0 ; i < points.length ; ++i){
+        if(point.key == points[i].key)
+            return i;
+    }
+    return -1;
 }
 
-function adjacentPoints(points, here) {
+function isAdjacent(edges, here, there) {
+    return edges[here][there] == 1;
+}
+
+function adjacentPoints(edges, points, here, dots) {
     var aa = [];
     points.forEach(function (point) {
-        if (isAdjacent(point, here)) {
+        var point_idx = index_of_point(point, dots);
+        var here_idx = index_of_point(here, dots);
+        if (isAdjacent(edges, point_idx, here_idx)) {
             aa.push(point);
         }
     });
     return aa;
 }
 
-function isPossible(points, path, end) {
+function isPossible(edges, points, path, end, dots) {
     var aa = [];
     points.forEach(function (point) {
         var test = path.some(function (v) {
-            return point === v;
+            return point.key == v.key;
         });
         if (!test) {
             aa.push(point);
         }
     });
-    return _isPossible(aa, path[path.length - 1], end);
+    return _isPossible(edges, aa, path[path.length - 1], end, dots);
 }
 
-function _isPossible(points, start, end) {
-    if (points.length === 0) return start === end;
-    var adjacent = adjacentPoints(points, start);
+function _isPossible(edges, points, start, end, dots) {
+    if (points.length == 0) return start.key == end.key;
+    var adjacent = adjacentPoints(edges, points, start, dots);
     return adjacent.some(function (v) {
-        return isPossible(points, [start, v], end);
+        return isPossible(edges, points, [start, v], end, dots);
     });
 }
