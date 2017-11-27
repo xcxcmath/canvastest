@@ -60,8 +60,23 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
     // ..etc?
 
     this.phase = "D"; // D phase or A phase
+    this.phase_msg = {'D': "Make your Hamiltonian path and set towers",'A':"Command your army and defeat the enemy"};
     this.message = "Game start"; //Message below the map
     this.message_index = null;
+    this.message_group = {'D':['Select vertex',
+                                'Think carefully before action',
+                                'You can cancle your last process by clicking backwards',
+                                'If the enemy finishes making path, you cannot go backwards'],
+                        'A':['Select vertex',
+                            'Click your headquarter to create armies',
+                            'M works for advancing of whole troops',
+                            'A works for attacking towers',
+                            'The number of armies is limited',
+                            'Attack towers to enhance your army']};
+    this.set_msg = function(){
+        var l = this.message_group[this.phase].length;
+        this.message = this.message_group[this.phase][Math.floor(Math.random()*l)];
+    }
     this.path_data = {'A': new path(dots[0], 'A'), 'B': new path(dots[dots.length-1], 'B')};
     this.tower_max = tower_max;
     this.army_max = {'A': army_max, 'B': army_max};
@@ -77,7 +92,7 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
     this.clickable = [];
 
     // Variables about time(ms)
-    this.intervals = {'phase': 1000, 'end': 500};
+    this.intervals = {'phase': 1000, 'end': 500, 'msg': 4000};
     
     // Function for index
     this.get_dots_index = function(v){
@@ -218,7 +233,7 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
         }
         else if(tm == 'initial'){
             if(dots[0].timer.message != 'building'){
-                this.message = 'Select vertex';
+                this.set_msg();
                 this.set_d_clickable();
                 this.timer.reset(null);
             }
@@ -226,7 +241,7 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
         else if(tm == 'path_const'){
             if(this.path_data[this.turn].timer.message != 'building'){
                 this.change_if_not_complete();
-                this.message = 'Select vertex';
+                this.set_msg();
                 this.set_d_clickable();
                 this.timer.reset(null);
             }
@@ -234,7 +249,7 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
         else if(tm == 'path_dest'){
             if(this.path_data[this.turn].timer.message != 'destroying'){
                 this.change_if_not_complete();
-                this.message = 'Select vertex';
+                this.set_msg();
                 this.set_d_clickable();
                 this.timer.reset(null);
             }
@@ -244,7 +259,7 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
             if(msg == 'building')
                 return;
             this.change_if_not_complete();
-            this.message = "Select vertex";
+            this.set_msg();
             this.set_d_clickable();
             this.timer.reset(null);
         }
@@ -253,14 +268,14 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
             if(msg == 'destroying')
                 return;
             this.change_if_not_complete();
-            this.message = "Select vertex";
+            this.set_msg();
             this.set_d_clickable();
             this.timer.reset(null);
         }
         else if(tm == 'phase'){
             if(this.timer.getrate(this.intervals[tm]) >= 1){
                 this.turn = 'B';
-                this.message = "Select vertex";
+                this.set_msg();
                 this.set_a_clickable();
                 this.timer.reset(null);
                 commands[this.turn][0].show = true;
@@ -322,12 +337,16 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
                     }
                 }
             }
+            if(this.timer.getrate(this.intervals['msg']) > 1){
+                this.timer.reset(null);
+                this.set_msg();
+            }
         }
     };
     this.draw_1 = function(){
         context.beginPath();
         //Message below
-        context.font = "30px Arial";
+        context.font = "25px Arial";
         context.textAlign = "center";
         context.textBaseline = "middle";
         if(this.timer.message != "initial" && this.timer.message != "phase"){
@@ -343,10 +362,13 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
         //Phase
         context.beginPath();
         context.fillStyle = forecolor;
-        context.font = "30px Arial";
+        context.fillRect(10, 10, canvas.width -20, 30);
+        context.beginPath();
+        context.fillStyle = backcolor;
+        context.font = "20px Arial";
         context.textAlign = "left";
         context.textBaseline = "middle";
-        context.fillText(this.phase + ' PHASE', 20, 20, 800);
+        context.fillText(this.phase + ' PHASE : ' + this.phase_msg[this.phase], 25, 25, 800);
         context.closePath();
 
         //Path
