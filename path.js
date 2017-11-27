@@ -157,7 +157,7 @@ function path(start_vertex, key){
             if(this.army[i] != 0){
                 var x = this.vertices[i].x;
                 var y = this.vertices[i].y - this.vertices[i].radius / 2;
-                var r = this.vertices[i].radius;
+                var r = this.vertices[i].radius * 0.8;
                 context.beginPath();
                 context.fillStyle = army_colors[this.key];
                 //context.lineWidth = 2;
@@ -165,7 +165,7 @@ function path(start_vertex, key){
                 context.fill();
                 context.beginPath();
                 context.fillStyle = forecolor;
-                context.fillText(this.army[i], x+army_delta[this.key], y, r);
+                context.fillText(this.army[i], x+army_delta[this.key], y, r * 2);
             }
         }
     }
