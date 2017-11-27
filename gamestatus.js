@@ -25,18 +25,7 @@ function gamestatus(tower_max, army_max, group_max, default_army, default_damage
         this.change_turn();
         var ret = (this.path_data[this.turn].vertices.length == dots.length);
         this.change_turn();
-        if(ret){/*
-            if(!isPossible(edge_info, dots, this.path_data[this.turn].vertices, another, dots)){
-                this.message = '';
-                this.winner = enemy;
-                this.timer.reset('end');
-                this.clickable = [];
-                colors[this.turn] = losecolor;
-                army_colors[this.turn] = losecolor;
-            }*/
-            return true;
-        }
-        return false;
+        return ret;
     }
     this.change_turn_and_commands = function(){
         commands[this.turn][0].show = false;
