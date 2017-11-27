@@ -76,7 +76,7 @@ function draw(){
     context.textAlign = 'left';
     context.textBaseline = 'middle';
     context.fillText("Project", canvas.width*0.3 - canvas.width/5, canvas.height*0.6 - 25, canvas.width*0.4);
-    context.fillText("Hamiltonian", canvas.width*0.3 - canvas.width/5, canvas.height*0.6 + 25, canvas.width*0.4);
+    context.fillText("Hamilton", canvas.width*0.3 - canvas.width/5, canvas.height*0.6 + 25, canvas.width*0.4);
     context.beginPath();
     context.strokeStyle = '#225'
     context.lineWidth = 5;
