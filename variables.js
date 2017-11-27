@@ -1,5 +1,5 @@
-var backcolor = '#014'; // 014
-var forecolor = '#dde'; // dde
+var backcolor = '#014';// 014
+var forecolor = '#dde';// dde
 var midcolor = '#55a'; //55a
 var losecolor = '#aaa';
 var colors = {"A": '#afa', "B": '#faa'};
